@@ -3,7 +3,7 @@
 #include <AL/alc.h>
 #include <iostream>
 
-bool check_alc_errors(ALCdevice *device)
+inline bool check_alc_errors(ALCdevice *device)
 {
     const auto error = alcGetError(device);
     if (error != ALC_NO_ERROR) {
@@ -32,7 +32,7 @@ bool check_alc_errors(ALCdevice *device)
     }
     return true;
 }
-bool check_al_errors()
+inline bool check_al_errors()
 {
     const auto error = alGetError();
     if (error != AL_NO_ERROR) {
@@ -63,7 +63,7 @@ bool check_al_errors()
 }
 
 template<typename alcFunction, typename... Params>
-auto alcCallImpl(alcFunction function, ALCdevice *device, Params... params) ->
+inline auto alcCallImpl(alcFunction function, ALCdevice *device, Params&&... params) ->
   typename std::enable_if_t<std::is_same_v<void, decltype(function(params...))>, bool>
 {
     function(std::forward<Params>(params)...);
@@ -71,7 +71,7 @@ auto alcCallImpl(alcFunction function, ALCdevice *device, Params... params) ->
 }
 
 template<typename alcFunction, typename ReturnType, typename... Params>
-auto alcCallImpl(alcFunction function, ReturnType &returnValue, ALCdevice *device, Params... params) ->
+inline auto alcCallImpl(alcFunction function, ReturnType &returnValue, ALCdevice *device, Params&&... params) ->
   typename std::enable_if_t<!std::is_same_v<void, decltype(function(params...))>, bool>
 {
     returnValue = function(std::forward<Params>(params)...);
@@ -79,7 +79,7 @@ auto alcCallImpl(alcFunction function, ReturnType &returnValue, ALCdevice *devic
 }
 
 template<typename alFunction, typename... Params>
-auto alCallImpl(alFunction function, Params... params) ->
+inline auto alCallImpl(alFunction function, Params&&... params) ->
   typename std::enable_if_t<!std::is_same_v<void, decltype(function(params...))>, decltype(function(params...))>
 {
     auto ret = function(std::forward<Params>(params)...);
@@ -88,7 +88,7 @@ auto alCallImpl(alFunction function, Params... params) ->
 }
 
 template<typename alFunction, typename... Params>
-auto alCallImpl(alFunction function, Params... params) ->
+inline auto alCallImpl(alFunction function, Params&&... params) ->
   typename std::enable_if_t<std::is_same_v<void, decltype(function(params...))>, bool>
 {
     function(std::forward<Params>(params)...);

@@ -9,9 +9,9 @@ add_library(${PROJECT_NAME} STATIC)
 
 target_sources(${PROJECT_NAME} 
     PRIVATE
-        soundEngine.h
-        soundEngine.cpp
- "helpers.h" "loadWave.h")
+        "SoundEngine.h"
+        "SoundEngine.cpp"
+ "helpers.h" "loadWave.h" "Source.h" "Source.cpp" "Buffer.h" "Buffer.cpp" "Types.h")
 
 target_include_directories(
     ${PROJECT_NAME}
