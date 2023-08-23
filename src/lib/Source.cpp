@@ -3,6 +3,8 @@
 #include "helpers.h"
 #include <AL/al.h>
 #include <AL/alc.h>
+
+#include <thread>
 using namespace soundEngineX;
 
 Source::Source()
@@ -17,7 +19,14 @@ Source::~Source()
 
 void Source::play()
 {
+
+    applyConfiguration();
     alCallImpl(alSourcePlay, source);
+    ALint state;
+    do
+    {
+        alCallImpl(alGetSourcei, source, AL_SOURCE_STATE, &state);
+    } while (state == AL_PLAYING);
 }
 
 

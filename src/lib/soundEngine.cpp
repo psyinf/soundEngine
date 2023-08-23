@@ -43,6 +43,8 @@ void SoundEngine::init()
         /* probably exit or give up on having sound */
         throw std::runtime_error("Could not make audio context current");
     }
+
+    //alcCallImpl(alcIsExtensionPresent(ALCdevice * device, const ALCchar *extName);
 }
 
 
@@ -65,7 +67,7 @@ void SoundEngine::iterateDevices(Device &device)
 
 std::shared_ptr<Buffer> soundEngineX::SoundEngine::getBuffer(const std::string& filename) 
 {    
-    auto buffer = std::make_shared<Buffer>();
+    auto buffer = std::make_unique<Buffer>();
     auto format = FormatDescriptor{};
     
     buffer->setData(format, load_wav(filename, format));
