@@ -20,7 +20,7 @@ try
     std::shared_ptr<soundEngineX::Buffer> buffer2 =
     loader.load(std::ifstream("data/test.wav", std::ios::binary), soundEngineX::loader::Type::WAV);
     std::shared_ptr<soundEngineX::Buffer> buffer1 =
-      loader.load(std::ifstream("data/charge.wav", std::ios::binary), soundEngineX::loader::Type::WAV);
+    loader.load(std::ifstream("data/test.wav", std::ios::binary), soundEngineX::loader::Type::WAV);
 
     source1.attachBuffer(buffer2);
     source2.attachBuffer(buffer1);

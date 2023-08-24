@@ -30,9 +30,9 @@ static void load_wav_file_header(std::istream &file, FormatDescriptor &format, s
         char data[4];
         std::uint32_t dataSize;
     } h;
-  
+
     file.read(reinterpret_cast<char *>(&h), 44);
-    //TODO: check header values
+    // TODO: check header values
 
     format.channels = h.numChannels;
     format.bitsPerSample = h.bitsPerSample;
@@ -40,15 +40,13 @@ static void load_wav_file_header(std::istream &file, FormatDescriptor &format, s
     size = h.dataSize;
 }
 
-static void resample() {
 
-}
 
 static std::vector<char> load_wav(std::istream &in, FormatDescriptor &format)
 {
     size_t size = 0;
     load_wav_file_header(in, format, size);
-    
+
     auto data = std::vector<char>(size);
     in.read(data.data(), size);
     return data;

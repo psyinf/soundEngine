@@ -15,6 +15,8 @@ struct SourceConfiguration
     float gain{ 1.0 };
     bool loop{ false };
 };
+
+
 class Source
 {
 public:

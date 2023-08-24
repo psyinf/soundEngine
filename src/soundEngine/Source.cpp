@@ -19,14 +19,13 @@ Source::~Source()
 
 void Source::play()
 {
-
     applyConfiguration();
     alCallImpl(alSourcePlay, source);
-    ALint state;
-    do
+    
+    for (ALint state = AL_PLAYING; state == AL_PLAYING;)
     {
         alCallImpl(alGetSourcei, source, AL_SOURCE_STATE, &state);
-    } while (state == AL_PLAYING);
+    } 
 }
 
 
