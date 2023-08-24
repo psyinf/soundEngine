@@ -14,16 +14,22 @@ struct FormatDescriptor
 };
 class Buffer
 {
+    using FormatType = int;
 public:
-    Buffer(const FormatDescriptor &format,const std::vector<char>& data);
-    Buffer(Buffer &&other);
-    Buffer();
+    Buffer(const FormatDescriptor &format, const std::vector<char> &data);
+    Buffer(Buffer &&other) noexcept;
+    Buffer() noexcept;
     ~Buffer();
+    Buffer& operator=(Buffer&& rhs) = delete;
+
 
     void setData(const FormatDescriptor &format, const std::vector<char> &data);
 
-    const FormatDescriptor& getFormat() { return format; }
-    operator ALuint() { return buffer; }
+    const FormatDescriptor &getFormat() { return format; }
+    operator ALuint() const { return buffer; }
+
+protected:
+    FormatType determineFormatType() const;
 
 private:
     ALuint buffer{ 0 };

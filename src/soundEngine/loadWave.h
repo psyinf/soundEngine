@@ -40,6 +40,10 @@ static void load_wav_file_header(std::istream &file, FormatDescriptor &format, s
     size = h.dataSize;
 }
 
+static void resample() {
+
+}
+
 static std::vector<char> load_wav(std::istream &in, FormatDescriptor &format)
 {
     size_t size = 0;

@@ -1,31 +1,39 @@
+#include "Loader.h"
 #include <Source.h>
 #include <chrono>
 #include <exception>
-#include <soundEngine.h>
-#include <iostream>
 #include <fstream>
+#include <future>
+#include <iostream>
+#include <soundEngine.h>
 #include <thread>
-#include "Loader.h"
 
-
-int main(int argc, char **argv)
+//https://github.com/ErikMcClure/tinyoal/tree/main/TinyOAL
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
 try
 {
-    soundEngineX::SoundEngine se;
-    soundEngineX::loader::Loader l;
-    
-    auto s1 = soundEngineX::Source();
-    s1.attachBuffer(se.getBuffer("data/test.wav"));
+    soundEngineX::SoundEngine engine;
+    soundEngineX::loader::Loader loader;
 
-    s1.attachBuffer(l.load(std::ifstream("data/test.wav"), soundEngineX::loader::Type::WAV));
-   
-    s1.setSourceConfig({
-      .pitch = 1.0,
+    auto source1 = soundEngineX::Source();
+    auto source2 = soundEngineX::Source();
+    std::shared_ptr<soundEngineX::Buffer> buffer2 =
+    loader.load(std::ifstream("data/test.wav", std::ios::binary), soundEngineX::loader::Type::WAV);
+    std::shared_ptr<soundEngineX::Buffer> buffer1 =
+      loader.load(std::ifstream("data/charge.wav", std::ios::binary), soundEngineX::loader::Type::WAV);
+
+    source1.attachBuffer(buffer2);
+    source2.attachBuffer(buffer1);
+
+    source2.setSourceConfig({
+      .pitch = 0.1,
       .gain = 1,
     });
-    
-    
-    s1.play();
+
+    auto a = std::async(std::launch::async, [&source1]() { source1.play(); });
+    auto a2 = std::async(std::launch::async, [&source2]() { source2.play(); });
+    a.wait();
+    a2.wait();
 
 
 } catch (const std::exception &e)
@@ -33,7 +41,7 @@ try
     // TODO: Log exception
     std::cerr << e.what() << std::endl;
 } catch (...)
-{   
+{
     // TODO: Log unknown exception
-    std::cerr << "Unkown exception" << std::endl;
+    std::cerr << "Unknown exception" << std::endl;
 }

@@ -10,7 +10,6 @@
 
 namespace soundEngineX {
 
-
 class SoundEngine
 {
 public:
@@ -21,8 +20,7 @@ public:
 private:
     void init();
     void iterateDevices(Device &device);
-
-    
+     
 
     Device device;
     Context context{ nullptr };  

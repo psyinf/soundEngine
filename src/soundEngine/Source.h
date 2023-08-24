@@ -25,11 +25,13 @@ public:
     void play();
     void setSourceConfig(const SourceConfiguration &config);
     const SourceConfiguration &getSourceConfiguration() const; 
-    operator ALuint() { return source; }
+    explicit operator ALuint() const { return source; };
 
     void applyConfiguration();
-    
+
 private:
+
+   
     std::shared_ptr<Buffer> attachedBuffer;
     ALuint source{};
     SourceConfiguration config;

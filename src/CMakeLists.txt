@@ -1,3 +1,3 @@
-add_subdirectory(lib)
+add_subdirectory(soundEngine)
 
 add_subdirectory(sandbox)
