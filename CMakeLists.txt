@@ -13,9 +13,9 @@ conan_cmake_install(PATH_OR_REFERENCE .
 				    SETTINGS ${settings})
 
 install(DIRECTORY
-		data/
+		data
 	DESTINATION
-		${CMAKE_INSTALL_BINDIR}/data
+		${CMAKE_INSTALL_BINDIR}
 	COMPONENT
 		${RUNTIME_COMPONENT}
 )
