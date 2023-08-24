@@ -39,37 +39,46 @@ ALenum getStereoFormat(uint8_t bitDepth)
 }// namespace internal
 
 
-soundEngineX::Buffer::Buffer(const FormatDescriptor &format, const std::vector<char> &data)
+soundEngineX::Buffer::Buffer(const FormatDescriptor &format, const DataDescriptor &data)
   : Buffer()
 {
     setData(format, data);
 }
 
 soundEngineX::Buffer::Buffer(Buffer &&other) noexcept
-  : buffer(other.buffer)
+  : buffers(std::move(other.buffers))
   , format(other.format)
 {
-    other.buffer = 0;
+    other.buffers = {};
 }
 
 soundEngineX::Buffer::Buffer() noexcept
+  : buffers(1)
 {
-    alCallImpl(alGenBuffers, 1, &buffer);
+    alCallImpl(alGenBuffers, buffers.size(), buffers.data());
 }
 
 soundEngineX::Buffer::~Buffer()
 {
-    if (buffer != 0)
-    {
-        alCallImpl(alDeleteBuffers, 1, &buffer);
-    }
+    alCallImpl(alDeleteBuffers, buffers.size(), buffers.data());
 }
 
-void soundEngineX::Buffer::setData(const FormatDescriptor &format, const std::vector<char> &data)
+void soundEngineX::Buffer::setData(const FormatDescriptor &format, const DataDescriptor &data)
 {
     this->format = format;
     auto al_format = determineFormatType();
-    alCallImpl(alBufferData, buffer, al_format, data.data(), data.size(), format.sampleRateHz);
+    for (auto i = 0; i < data.chunks.size(); ++i)
+    {
+        //TODO: handle empty buffers
+        alCallImpl(
+          alBufferData, buffers[i], al_format, data.chunks[i].data(), data.chunks[i].size(), format.sampleRateHz);
+    }
+}
+
+
+const std::vector<ALuint> &soundEngineX::Buffer::getHandles() const
+{
+    return buffers;
 }
 
 soundEngineX::Buffer::FormatType soundEngineX::Buffer::determineFormatType() const

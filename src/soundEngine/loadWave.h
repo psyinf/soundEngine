@@ -41,18 +41,19 @@ static void load_wav_file_header(std::istream &file, FormatDescriptor &format, s
 }
 
 
-
-static std::vector<char> load_wav(std::istream &in, FormatDescriptor &format)
+static soundEngineX::DataDescriptor load_wav(std::istream &in, FormatDescriptor &format)
 {
     size_t size = 0;
     load_wav_file_header(in, format, size);
-
-    auto data = std::vector<char>(size);
-    in.read(data.data(), size);
-    return data;
+    DataDescriptor data_desc = DataDescriptor(1);
+    data_desc.chunks[0].resize(size);
+       
+    in.read(data_desc.chunks[0].data(), data_desc.chunks[0].size());
+    
+    return data_desc;
 }
 
-static std::vector<char> load_wav(const std::string &filename, FormatDescriptor &format)
+static soundEngineX::DataDescriptor load_wav(const std::string &filename, FormatDescriptor &format)
 {
     std::ifstream in(filename, std::ios::binary);
     if (!in.is_open())

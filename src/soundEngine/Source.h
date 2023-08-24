@@ -16,14 +16,13 @@ struct SourceConfiguration
     bool loop{ false };
 };
 
-
 class Source
 {
 public:
     Source();
     virtual ~Source();
 
-    void attachBuffer(std::shared_ptr<Buffer> buffer);
+    void attachBuffer(std::shared_ptr<Buffer>& buffer);
     void play();
     void setSourceConfig(const SourceConfiguration &config);
     const SourceConfiguration &getSourceConfiguration() const; 
@@ -32,8 +31,7 @@ public:
     void applyConfiguration();
 
 private:
-
-   
+       
     std::shared_ptr<Buffer> attachedBuffer;
     ALuint source{};
     SourceConfiguration config;

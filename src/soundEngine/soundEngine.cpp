@@ -69,7 +69,7 @@ std::shared_ptr<Buffer> soundEngineX::SoundEngine::getBuffer(const std::string& 
 {    
     auto buffer = std::make_unique<Buffer>();
     auto format = FormatDescriptor{};
-    
-    buffer->setData(format, load_wav(filename, format));
+    auto data = load_wav(filename, format);
+    buffer->setData(format, data);
     return buffer;
 }

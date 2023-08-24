@@ -11,7 +11,13 @@ target_sources(${PROJECT_NAME}
     PRIVATE
         "SoundEngine.h"
         "SoundEngine.cpp"
- "helpers.h" "loadWave.h" "Source.h" "Source.cpp" "Buffer.h" "Buffer.cpp" "Types.h" "Loader.h" "Loader.cpp")
+        "helpers.h" 
+        "loadWave.h" 
+        "Source.h" "Source.cpp" 
+         
+        "Types.h" 
+        "Loader.h" "Loader.cpp" 
+        "Buffer.h" "Buffer.cpp")
 
 target_include_directories(
     ${PROJECT_NAME}
