@@ -19,24 +19,32 @@ Source::~Source()
 
 void Source::play()
 {
-    
+
     applyConfiguration();
     ALint buffersProcessed = 0;
-    alCallImpl(alGetSourcei, source, AL_BUFFERS_PROCESSED, &buffersProcessed);
-    if (buffersProcessed > 0)
-    {
-        ALuint buffer;
-        alCallImpl(alSourceUnqueueBuffers, source, 1, &buffer);
-    }
+
 
     alCallImpl(alSourcePlay, source);
 
 
-
     for (ALint state = AL_PLAYING; state == AL_PLAYING;)
     {
+        
+        alCallImpl(alGetSourcei, source, AL_BUFFERS_PROCESSED, &buffersProcessed);
         alCallImpl(alGetSourcei, source, AL_SOURCE_STATE, &state);
-    } 
+        //check if there are more buffers
+        if (buffersProcessed > 0 || state == AL_STOPPED)
+        {
+            ALuint bufferHandle;
+            alCallImpl(alSourceUnqueueBuffers, source, 1, &bufferHandle);
+            auto newBuffers = attachedBuffer->bufferUnqueued(bufferHandle);
+           
+            alCallImpl(alSourceQueueBuffers, source, static_cast<ALsizei>(newBuffers.size()), newBuffers.data());
+           
+            alCallImpl(alSourcePlay, source);
+            alCallImpl(alGetSourcei, source, AL_SOURCE_STATE, &state);
+        }
+    }
 }
 
 
@@ -57,9 +65,9 @@ void Source::applyConfiguration()
     alCallImpl(alSourcei, source, AL_LOOPING, config.loop);
 }
 
-void Source::attachBuffer(std::shared_ptr<Buffer>& buffer)
+void Source::attachBuffer(std::shared_ptr<Buffer> &buffer)
 {
     attachedBuffer = buffer;
-    alCallImpl(alSourceQueueBuffers, source, static_cast<ALsizei>(buffer->getHandles().size()), buffer->getHandles().data());
-    
+    alCallImpl(
+      alSourceQueueBuffers, source, static_cast<ALsizei>(buffer->getHandles().size()), buffer->getHandles().data());
 }

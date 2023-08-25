@@ -33,8 +33,9 @@ class Buffer
 
 public:
     Buffer(const FormatDescriptor &format, const DataDescriptor &data);
+
     Buffer(Buffer &&other) noexcept;
-    Buffer() noexcept;
+    explicit Buffer(size_t num_chunks = 1) noexcept;
     ~Buffer();
 
     Buffer(Buffer &rhs) = delete;
@@ -42,7 +43,7 @@ public:
     Buffer &operator=(Buffer &rhs) = delete;
 
     void setData(const FormatDescriptor &format, const DataDescriptor &data);
-
+    std::vector<ALuint> bufferUnqueued(ALuint buffer);
     const FormatDescriptor &getFormat() { return format; }
     const std::vector<ALuint> &getHandles() const;
 

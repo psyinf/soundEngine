@@ -52,8 +52,8 @@ soundEngineX::Buffer::Buffer(Buffer &&other) noexcept
     other.buffers = {};
 }
 
-soundEngineX::Buffer::Buffer() noexcept
-  : buffers(1)
+soundEngineX::Buffer::Buffer(size_t num_chunks) noexcept
+  : buffers(num_chunks)
 {
     alCallImpl(alGenBuffers, buffers.size(), buffers.data());
 }
@@ -75,6 +75,20 @@ void soundEngineX::Buffer::setData(const FormatDescriptor &format, const DataDes
     }
 }
 
+
+std::vector<ALuint> soundEngineX::Buffer::bufferUnqueued(ALuint buffer)
+{
+    //if stream data source
+    //request next buffer chunk(s) and report them
+    static bool t = true;
+    if (t)
+    {
+        t = false;
+        return { 1 };
+
+    }
+    return {0};
+}
 
 const std::vector<ALuint> &soundEngineX::Buffer::getHandles() const
 {
