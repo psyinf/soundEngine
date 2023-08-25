@@ -10,6 +10,7 @@
 #include "helpers.h"
 #include "loadWave.h"
 #include <Buffer.h>
+#include <Loader.h>
 using namespace soundEngineX;
 
 
@@ -66,10 +67,7 @@ void SoundEngine::iterateDevices(Device &device)
 }
 
 std::shared_ptr<Buffer> soundEngineX::SoundEngine::getBuffer(const std::string& filename) 
-{    
-    auto buffer = std::make_unique<Buffer>();
-    auto format = FormatDescriptor{};
-    auto data = load_wav(filename, format);
-    buffer->setData(format, data);
-    return buffer;
+{   
+    loader::Loader loader;
+    return loader.load(std::ifstream(filename, std::ios_base::binary), loader::Type::WAV);
 }

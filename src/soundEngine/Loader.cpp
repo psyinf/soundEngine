@@ -9,7 +9,7 @@ std::unique_ptr<Buffer> Loader::load(std::istream &&stream, Type type)
     switch (type)
     {
     case soundEngineX::loader::Type::WAV: {
-        return std::make_unique<Buffer>( format, load_wav(stream, format) );
+        return std::make_unique<Buffer>(load_wav(stream) );
     }
     break;
     default:
@@ -17,5 +17,19 @@ std::unique_ptr<Buffer> Loader::load(std::istream &&stream, Type type)
         break;
     }
     
+}
+std::unique_ptr<soundEngineX::Buffer> Loader::loadStream(std::istream &stream, Type type)
+{
+    FormatDescriptor format;
+    switch (type)
+    {
+    case soundEngineX::loader::Type::WAV: {
+        return std::make_unique<Buffer>(load_wav(stream));
+    }
+    break;
+    default:
+        throw std::invalid_argument("Unknown format");
+        break;
+    }
 }
 }// namespace soundEngineX::loader

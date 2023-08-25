@@ -39,10 +39,10 @@ ALenum getStereoFormat(uint8_t bitDepth)
 }// namespace internal
 
 
-soundEngineX::Buffer::Buffer(const FormatDescriptor &format, const DataDescriptor &data)
-  : Buffer()
+soundEngineX::Buffer::Buffer(const DataDescriptor &data)
+  : Buffer(data.chunks.size())
 {
-    setData(format, data);
+    setData(data);
 }
 
 soundEngineX::Buffer::Buffer(Buffer &&other) noexcept
@@ -52,9 +52,13 @@ soundEngineX::Buffer::Buffer(Buffer &&other) noexcept
     other.buffers = {};
 }
 
-soundEngineX::Buffer::Buffer(size_t num_chunks) noexcept
+soundEngineX::Buffer::Buffer(size_t num_chunks)
   : buffers(num_chunks)
 {
+    if (num_chunks == 0)
+    {
+        throw std::invalid_argument("Number of chunks must be greater than 0");
+    }
     alCallImpl(alGenBuffers, buffers.size(), buffers.data());
 }
 
@@ -63,9 +67,9 @@ soundEngineX::Buffer::~Buffer()
     alCallImpl(alDeleteBuffers, buffers.size(), buffers.data());
 }
 
-void soundEngineX::Buffer::setData(const FormatDescriptor &format, const DataDescriptor &data)
+void soundEngineX::Buffer::setData(const DataDescriptor &data)
 {
-    this->format = format;
+    this->format = data.format;
     auto al_format = determineFormatType();
     for (auto i = 0; i < data.chunks.size(); ++i)
     {
@@ -80,13 +84,6 @@ std::vector<ALuint> soundEngineX::Buffer::bufferUnqueued(ALuint buffer)
 {
     //if stream data source
     //request next buffer chunk(s) and report them
-    static bool t = true;
-    if (t)
-    {
-        t = false;
-        return { 1 };
-
-    }
     return {0};
 }
 

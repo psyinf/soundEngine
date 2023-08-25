@@ -14,6 +14,8 @@ public:
     Loader() = default;
 
     std::unique_ptr<soundEngineX::Buffer> load(std::istream &&stream, Type type);
+    std::unique_ptr<soundEngineX::Buffer> loadStream(std::istream &stream, Type type);
+    
 };
 
 
