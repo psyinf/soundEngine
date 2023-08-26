@@ -42,8 +42,7 @@ void queuedBuffer()
 
     auto source = soundEngineX::Source();
 
-    std::shared_ptr<soundEngineX::Buffer> buffer =
-      loader.load(std::ifstream("data/test.wav", std::ios::binary), soundEngineX::loader::Type::WAV);
+    std::shared_ptr<soundEngineX::Buffer> buffer = loader.fakeStream({ "data/test.wav", "data/test.wav" });
 
     source.attachBuffer(buffer);
 

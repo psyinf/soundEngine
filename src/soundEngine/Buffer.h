@@ -2,6 +2,7 @@
 #include <AL/al.h>
 #include <Buffer.h>
 #include <cstdint>
+#include <deque>
 #include <functional>
 #include <vector>
 
@@ -18,13 +19,9 @@ struct FormatDescriptor
 
 struct DataDescriptor
 {
-    using RequestDataFunction = std::function<DataDescriptor>(size_t);
+    using RequestDataFunction = std::function<DataDescriptor(size_t)>;
     using DataChunk = std::vector<char>;
     using Chunks = std::vector<DataChunk>;
-    DataDescriptor() = default;
-    explicit DataDescriptor(size_t size)
-      : chunks(size)
-    {}
 
     FormatDescriptor format;
     Chunks chunks;
@@ -38,7 +35,7 @@ class Buffer
 
 public:
     Buffer(const DataDescriptor &data);
-
+    Buffer(DataDescriptor &&data);
     Buffer(Buffer &&other) noexcept;
     explicit Buffer(size_t num_chunks = 1);
     ~Buffer();
@@ -48,17 +45,17 @@ public:
     Buffer &operator=(Buffer &rhs) = delete;
 
    
-    std::vector<ALuint> bufferUnqueued(ALuint buffer);
+    std::vector<ALuint> buffersUnqueued(const std::vector<ALuint> &unqueuedBuffers);
     const FormatDescriptor &getFormat() { return format; }
     const std::vector<ALuint> &getHandles() const;
 
 
 protected:
     FormatType determineFormatType() const;
-    void setData(const DataDescriptor &data);
 
 private:
-    std::vector<ALuint> buffers;
+    std::vector<ALuint> buffers; //> AL buffer handles allocated by this buffer
+    std::deque<ALuint> freeBuffers; //> AL buffer handles that are free to be used
 
     FormatDescriptor format;
     DataDescriptor::RequestDataFunction requestMoreDataCallback;

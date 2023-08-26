@@ -5,11 +5,11 @@ namespace soundEngineX::loader {
 
 std::unique_ptr<Buffer> Loader::load(std::istream &&stream, Type type)
 {
-    FormatDescriptor format;
-    switch (type)
+   switch (type)
     {
     case soundEngineX::loader::Type::WAV: {
-        return std::make_unique<Buffer>(load_wav(stream) );
+        auto &&[data, format] = load_wav(stream); 
+        return std::make_unique<Buffer>(DataDescriptor{ .format=format, .chunks={ data } });
     }
     break;
     default:
@@ -18,18 +18,18 @@ std::unique_ptr<Buffer> Loader::load(std::istream &&stream, Type type)
     }
     
 }
-std::unique_ptr<soundEngineX::Buffer> Loader::loadStream(std::istream &stream, Type type)
+
+std::unique_ptr<Buffer> Loader::fakeStream(const std::vector<std::string> &names)
 {
-    FormatDescriptor format;
-    switch (type)
+    DataDescriptor ds{};
+
+    for (auto file : names)
     {
-    case soundEngineX::loader::Type::WAV: {
-        return std::make_unique<Buffer>(load_wav(stream));
+        auto &&[data, format] = load_wav(file);
+        ds.format = format;
+        ds.chunks.push_back(data);
     }
-    break;
-    default:
-        throw std::invalid_argument("Unknown format");
-        break;
-    }
+  
+    return std::make_unique<Buffer>(ds);
 }
 }// namespace soundEngineX::loader

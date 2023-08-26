@@ -29,19 +29,21 @@ void Source::play()
 
     for (ALint state = AL_PLAYING; state == AL_PLAYING;)
     {
-        
+
         alCallImpl(alGetSourcei, source, AL_BUFFERS_PROCESSED, &buffersProcessed);
         alCallImpl(alGetSourcei, source, AL_SOURCE_STATE, &state);
-        //check if there are more buffers
+        // check if there are more buffers
         if (buffersProcessed > 0 || state == AL_STOPPED)
         {
-            ALuint bufferHandle;
-            alCallImpl(alSourceUnqueueBuffers, source, 1, &bufferHandle);
-            auto newBuffers = attachedBuffer->bufferUnqueued(bufferHandle);
-           
-            alCallImpl(alSourceQueueBuffers, source, static_cast<ALsizei>(newBuffers.size()), newBuffers.data());
-           
-            alCallImpl(alSourcePlay, source);
+            std::vector<ALuint> buffers(buffersProcessed);
+
+            alCallImpl(alSourceUnqueueBuffers, source, buffersProcessed, buffers.data());
+            auto newBuffers = attachedBuffer->buffersUnqueued(buffers);
+            if (newBuffers.empty())
+            {
+                alCallImpl(alSourceQueueBuffers, source, static_cast<ALsizei>(newBuffers.size()), newBuffers.data());
+                alCallImpl(alSourcePlay, source);
+            }
             alCallImpl(alGetSourcei, source, AL_SOURCE_STATE, &state);
         }
     }
