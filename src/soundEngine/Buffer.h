@@ -17,15 +17,20 @@ struct FormatDescriptor
     std::uint8_t bitsPerSample{};
 };
 
+struct DataChunk
+{
+    FormatDescriptor format;
+    std::vector<char> data;
+};
+
 struct DataDescriptor
 {
     using RequestDataFunction = std::function<DataDescriptor(size_t)>;
-    using DataChunk = std::vector<char>;
     using Chunks = std::vector<DataChunk>;
 
-    FormatDescriptor format;
+
     Chunks chunks;
-    
+
     RequestDataFunction requestMoreDataCallback;
 };
 
@@ -44,20 +49,23 @@ public:
     Buffer &operator=(Buffer &&rhs) = delete;
     Buffer &operator=(Buffer &rhs) = delete;
 
-   
+
     std::vector<ALuint> buffersUnqueued(const std::vector<ALuint> &unqueuedBuffers);
-    const FormatDescriptor &getFormat() { return format; }
     const std::vector<ALuint> &getHandles() const;
+
+private:
+    void setBufferData(const auto &chunk, ALuint targetBuffer);
+
+    
 
 
 protected:
-    FormatType determineFormatType() const;
+    FormatType determineFormatType(const FormatDescriptor& format) const;
 
 private:
-    std::vector<ALuint> buffers; //> AL buffer handles allocated by this buffer
-    std::deque<ALuint> freeBuffers; //> AL buffer handles that are free to be used
+    std::vector<ALuint> buffers;//> AL buffer handles allocated by this buffer
+    std::deque<ALuint> freeBuffers;//> AL buffer handles that are free to be used
 
-    FormatDescriptor format;
     DataDescriptor::RequestDataFunction requestMoreDataCallback;
 };
 

@@ -1,7 +1,7 @@
 #pragma once
+#include "Buffer.h"
 #include <istream>
 #include <vector>
-#include "Buffer.h"
 namespace soundEngineX::loader {
 
 
@@ -13,11 +13,13 @@ class Loader
 public:
     Loader() = default;
 
-    std::unique_ptr<soundEngineX::Buffer> load(std::istream &&stream, Type type);
 
-    
-    std::unique_ptr<soundEngineX::Buffer> fakeStream(const std::vector<std::string>& names);
-   
+    DataDescriptor load(std::string_view name);
+    DataDescriptor load(std::istream &&stream, Type type);
+
+    DataDescriptor loadMultiple(const std::vector<std::string> &names);
+
+    Type getType(std::string_view name) const;
 };
 
 

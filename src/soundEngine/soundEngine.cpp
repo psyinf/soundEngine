@@ -65,9 +65,3 @@ void SoundEngine::iterateDevices(Device &device)
     }
     */
 }
-
-std::shared_ptr<Buffer> soundEngineX::SoundEngine::getBuffer(const std::string& filename) 
-{   
-    loader::Loader loader;
-    return loader.load(std::ifstream(filename, std::ios_base::binary), loader::Type::WAV);
-}
