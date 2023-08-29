@@ -5,7 +5,7 @@
 #include <fstream>
 #include <future>
 #include <iostream>
-#include <soundEngine.h>
+#include <SoundEngine.h>
 #include <thread>
 
 void sharedBuffer()
@@ -15,10 +15,10 @@ void sharedBuffer()
 
     auto source1 = soundEngineX::Source();
     auto source2 = soundEngineX::Source();
-    std::shared_ptr<soundEngineX::Buffer> buffer2 =
-      loader.load(std::ifstream("data/test.wav", std::ios::binary), soundEngineX::loader::Type::WAV);
     std::shared_ptr<soundEngineX::Buffer> buffer1 =
-      loader.load(std::ifstream("data/test.wav", std::ios::binary), soundEngineX::loader::Type::WAV);
+      std::make_unique<soundEngineX::Buffer>(loader.load("data/test.wav"));
+    std::shared_ptr<soundEngineX::Buffer> buffer2 =
+      std::make_unique<soundEngineX::Buffer>(loader.load("data/test.wav"));
 
     source1.attachBuffer(buffer1);
     source2.attachBuffer(buffer1);
@@ -42,8 +42,7 @@ void queuedBuffer()
 
     auto source = soundEngineX::Source();
 
-    std::shared_ptr<soundEngineX::Buffer> buffer =
-      loader.load(std::ifstream("data/test.wav", std::ios::binary), soundEngineX::loader::Type::WAV);
+    std::shared_ptr<soundEngineX::Buffer> buffer = std::make_unique<soundEngineX::Buffer>( loader.loadMultiple({ "data/test.wav", "data/test.wav" }) );
 
     source.attachBuffer(buffer);
 

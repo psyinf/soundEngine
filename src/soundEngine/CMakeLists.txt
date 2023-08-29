@@ -1,7 +1,7 @@
 project(soundEngine LANGUAGES CXX)
 include(GNUInstallDirs)
 
-find_package(OpenAL CONFIG REQUIRED)
+find_package(OpenAL REQUIRED)
 
 
 
@@ -11,8 +11,8 @@ target_sources(${PROJECT_NAME}
     PRIVATE
         "SoundEngine.h"
         "SoundEngine.cpp"
-        "helpers.h" 
-        "loadWave.h" 
+        "Helpers.h" 
+        "LoadWave.h" 
         "Source.h" "Source.cpp" 
          
         "Types.h" 

@@ -1,4 +1,4 @@
-#include "soundEngine.h"
+#include "SoundEngine.h"
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <cstdint>
@@ -7,9 +7,10 @@
 #include <string>
 #include <string_view>
 
-#include "helpers.h"
-#include "loadWave.h"
+#include "Helpers.h"
+#include "LoadWave.h"
 #include <Buffer.h>
+#include <Loader.h>
 using namespace soundEngineX;
 
 
@@ -63,13 +64,4 @@ void SoundEngine::iterateDevices(Device &device)
         for (auto &&word : split) { std::cout << word << std::endl; }
     }
     */
-}
-
-std::shared_ptr<Buffer> soundEngineX::SoundEngine::getBuffer(const std::string& filename) 
-{    
-    auto buffer = std::make_unique<Buffer>();
-    auto format = FormatDescriptor{};
-    auto data = load_wav(filename, format);
-    buffer->setData(format, data);
-    return buffer;
 }

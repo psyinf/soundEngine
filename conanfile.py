@@ -8,7 +8,7 @@ class sound(ConanFile):
     requires = [ ("openal/1.22.2")  
                 ,("catch2/3.4.0")
                ]
-    generators = "cmake_find_package_multi"
+    generators = ["CMakeToolchain" , "CMakeDeps"]
     
     def configure(self):
         self.options['vsg'].shared = False

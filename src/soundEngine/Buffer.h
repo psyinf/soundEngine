@@ -2,6 +2,8 @@
 #include <AL/al.h>
 #include <Buffer.h>
 #include <cstdint>
+#include <deque>
+#include <functional>
 #include <vector>
 
 
@@ -15,16 +17,21 @@ struct FormatDescriptor
     std::uint8_t bitsPerSample{};
 };
 
+struct DataChunk
+{
+    FormatDescriptor format;
+    std::vector<char> data;
+};
+
 struct DataDescriptor
 {
-    using DataChunk = std::vector<char>;
+    using RequestDataFunction = std::function<DataDescriptor(size_t)>;
+    using Chunks = std::vector<DataChunk>;
 
-    DataDescriptor() = default;
-    explicit DataDescriptor(size_t size)
-      : chunks(size)
-    {}
 
-    std::vector<DataChunk> chunks;
+    Chunks chunks;
+
+    RequestDataFunction requestMoreDataCallback;
 };
 
 class Buffer
@@ -32,28 +39,34 @@ class Buffer
     using FormatType = int;
 
 public:
-    Buffer(const FormatDescriptor &format, const DataDescriptor &data);
-
+    Buffer(const DataDescriptor &data);
+    Buffer(DataDescriptor &&data);
     Buffer(Buffer &&other) noexcept;
-    explicit Buffer(size_t num_chunks = 1) noexcept;
+    explicit Buffer(size_t num_chunks = 1);
     ~Buffer();
 
     Buffer(Buffer &rhs) = delete;
     Buffer &operator=(Buffer &&rhs) = delete;
     Buffer &operator=(Buffer &rhs) = delete;
 
-    void setData(const FormatDescriptor &format, const DataDescriptor &data);
-    std::vector<ALuint> bufferUnqueued(ALuint buffer);
-    const FormatDescriptor &getFormat() { return format; }
+
+    std::vector<ALuint> buffersUnqueued(const std::vector<ALuint> &unqueuedBuffers);
     const std::vector<ALuint> &getHandles() const;
+
+private:
+    void setBufferData(const auto &chunk, ALuint targetBuffer);
+
+    
 
 
 protected:
-    FormatType determineFormatType() const;
+    FormatType determineFormatType(const FormatDescriptor& format) const;
 
 private:
-    std::vector<ALuint> buffers;
-    FormatDescriptor format;
+    std::vector<ALuint> buffers;//> AL buffer handles allocated by this buffer
+    std::deque<ALuint> freeBuffers;//> AL buffer handles that are free to be used
+
+    DataDescriptor::RequestDataFunction requestMoreDataCallback;
 };
 
 }// namespace soundEngineX

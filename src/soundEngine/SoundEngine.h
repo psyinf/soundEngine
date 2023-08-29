@@ -15,7 +15,7 @@ class SoundEngine
 public:
     SoundEngine();
     ~SoundEngine();
-    std::shared_ptr<Buffer> getBuffer(const std::string& filename);
+
 
 private:
     void init();
