@@ -1,4 +1,4 @@
-#include "soundEngine.h"
+#include "SoundEngine.h"
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <cstdint>
@@ -7,8 +7,8 @@
 #include <string>
 #include <string_view>
 
-#include "helpers.h"
-#include "loadWave.h"
+#include "Helpers.h"
+#include "LoadWave.h"
 #include <Buffer.h>
 #include <Loader.h>
 using namespace soundEngineX;
