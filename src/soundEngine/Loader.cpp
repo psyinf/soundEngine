@@ -1,5 +1,5 @@
 #include "Loader.h"
-#include "loadWave.h"
+#include "LoadWave.h"
 #include <filesystem>
 #include <istream>
 namespace soundEngineX::loader {

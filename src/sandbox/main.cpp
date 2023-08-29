@@ -5,7 +5,7 @@
 #include <fstream>
 #include <future>
 #include <iostream>
-#include <soundEngine.h>
+#include <SoundEngine.h>
 #include <thread>
 
 void sharedBuffer()

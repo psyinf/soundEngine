@@ -1,6 +1,6 @@
 #include "Source.h"
 #include "Buffer.h"
-#include "helpers.h"
+#include "Helpers.h"
 #include <AL/al.h>
 #include <AL/alc.h>
 
