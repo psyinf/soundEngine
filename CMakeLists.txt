@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
-project(sagan)
-
+project(soundengine)
+set(CODE_COVERAGE ON)
 #add cmake script to downlad conan-cmake integrations
 include(cmake/conan_config.cmake)
 include(cmake/PreventInSourceBuilds.cmake)
-include(cmake/coverage.cmake)
+include(cmake/cmake-coverage.cmake)
 
 conan_cmake_autodetect(settings)
 conan_cmake_install(PATH_OR_REFERENCE .
@@ -20,6 +20,6 @@ install(DIRECTORY
 		${RUNTIME_COMPONENT}
 )
 
-enable_testing()
-add_subdirectory(src)
-add_subdirectory(test)
+
+add_subdirectory(soundengine)
+add_subdirectory(sandbox)

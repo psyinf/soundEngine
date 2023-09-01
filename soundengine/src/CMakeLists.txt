@@ -1,9 +1,7 @@
 project(soundEngine LANGUAGES CXX)
 include(GNUInstallDirs)
-
+add_code_coverage()
 find_package(OpenAL REQUIRED)
-
-
 
 add_library(${PROJECT_NAME} STATIC)
 
@@ -11,7 +9,7 @@ target_sources(${PROJECT_NAME}
     PRIVATE
         "SoundEngine.h"
         "SoundEngine.cpp"
-        "Helpers.h" 
+        "ALHelpers.h" 
         "LoadWave.h" 
         "Source.h" "Source.cpp" 
          
@@ -47,5 +45,6 @@ install(
     NAMESPACE ${PROJECT_NAME}::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
+target_code_coverage(${PROJECT_NAME})
 #install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/
  #       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
