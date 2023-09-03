@@ -1,0 +1,63 @@
+name: CMake
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    steps:
+      #-uses: actions/cache@v3   <===== YOU DO NOT NEED THIS!
+      # Install latest CMake and Ninja.
+      - name: get cmake
+        uses: lukka/get-cmake@latest
+      - name: Install Conan
+        id: conan
+        uses: turtlebrowser/get-conan@main
+        with:
+          version: 1.60.2
+      - name: Install GCC prepare env
+        uses: egor-tensin/setup-gcc@v1
+        with:
+          version: 11
+          platform: x64 
+      - name: Create default Conan profile
+        run: conan profile new default --detect    
+      - name: Conan profile update
+        run:  |
+            conan profile update conf.tools.system.package_manager:mode=install default
+            conan profile update conf.tools.system.package_manager:sudo=True default   
+
+      - name: Run CMake consuming CMakePresets.json and vcpkg.json by mean of vcpkg.
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: 'unixlike-gcc-debug'
+          # Additional arguments can be appended to the cmake command.
+          # This is useful to reduce the number of CMake's Presets since you can reuse
+          # an existing preset with different variables.
+          configurePresetAdditionalArgs: "['-DENABLE_YOUR_FEATURE=1']"
+
+          # This is the name of the CMakePresets.json's configuration to build the project.
+          buildPreset: 'gcc-debug'
+          # Additional arguments can be appended when building, for example to specify the
+          # configuration to build.
+          # This is useful to reduce the number of CMake's Presets you need in CMakePresets.json.
+         # buildPresetAdditionalArgs: "['--config Release']"
+    
+          # This is the name of the CMakePresets.json's configuration to test the project with.
+          #testPreset: 'ninja-multi-vcpkg'
+          # Additional arguments can be appended when testing, for example to specify the config
+          # to test.
+          # This is useful to reduce the number of CMake's Presets you need in CMakePresets.json.
+          #testPresetAdditionalArgs: "['--config Release']"
+
+    #env:
+    #  VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }} # [OPTIONAL] Define the vcpkg's triplet 
+    # you want to enforce, otherwise the default one for the hosting system will be 
+    # automatically choosen (x64 is the default on all platforms,  e.g. x64-osx).
