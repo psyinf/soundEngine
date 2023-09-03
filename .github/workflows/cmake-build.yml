@@ -1,4 +1,4 @@
-name: CMake
+name: CMake-2
 
 on:
   push:
@@ -12,7 +12,11 @@ env:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
+
     steps:
+      - uses: actions/checkout@v3
+
       #-uses: actions/cache@v3   <===== YOU DO NOT NEED THIS!
       # Install latest CMake and Ninja.
       - name: get cmake
