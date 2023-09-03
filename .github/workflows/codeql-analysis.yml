@@ -26,6 +26,9 @@ jobs:
       security-events: write
 
     steps:
+    - name: Setup LCOV
+      uses: hrishikesh-kadam/setup-lcov@v1    
+
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: Install Conan
