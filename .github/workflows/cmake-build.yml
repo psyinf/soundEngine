@@ -22,6 +22,9 @@ jobs:
         uses: turtlebrowser/get-conan@main
         with:
           version: 1.60.2
+      steps:
+      - name: Setup LCOV
+        uses: hrishikesh-kadam/setup-lcov@v1    
       - name: Install GCC prepare env
         uses: egor-tensin/setup-gcc@v1
         with:
