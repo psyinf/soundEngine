@@ -28,7 +28,17 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-
+    - name: Install Conan
+      id: conan
+      uses: turtlebrowser/get-conan@main
+      with:
+        version: 1.60.2
+    - name: Create default Conan profile
+      run: conan profile new default --detect    
+    - name: Conan profile update
+      run:  |
+            conan profile update conf.tools.system.package_manager:mode=install default
+            conan profile update conf.tools.system.package_manager:sudo=True default    
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
