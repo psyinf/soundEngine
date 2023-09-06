@@ -1,6 +1,6 @@
-# sagan
+# soundEngine
 
-Yet another attempt to build a space game based on EnTT
+Simple C++ soundengine based on OpenAL 
 
 ## Requirements
 * [Python 3.x](https://python.org)
