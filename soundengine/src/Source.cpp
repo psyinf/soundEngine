@@ -1,10 +1,9 @@
 #include "Source.h"
 #include "Buffer.h"
-#include "Helpers.h"
+#include "ALHelpers.h"
 #include <AL/al.h>
 #include <AL/alc.h>
 
-#include <thread>
 using namespace soundEngineX;
 
 Source::Source()
