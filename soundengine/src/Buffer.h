@@ -52,6 +52,10 @@ public:
 
     std::vector<ALuint> buffersUnqueued(const std::vector<ALuint> &unqueuedBuffers);
     const std::vector<ALuint> &getHandles() const;
+    void setRequestNewDataCallback(DataDescriptor::RequestDataFunction requestDataFunction)
+    {
+        requestMoreDataCallback = requestDataFunction;
+    }
 
 private:
     void setBufferData(const auto &chunk, ALuint targetBuffer);

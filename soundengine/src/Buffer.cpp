@@ -90,7 +90,6 @@ soundEngineX::Buffer::~Buffer()
 
 std::vector<ALuint> soundEngineX::Buffer::buffersUnqueued(const std::vector<ALuint> &unqueuedBuffers)
 {
-
     freeBuffers.insert(freeBuffers.end(), unqueuedBuffers.begin(), unqueuedBuffers.end());
 
     size_t newBuffers = 0;
