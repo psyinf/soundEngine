@@ -2,12 +2,14 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <iostream>
-
+#ifdef USE_STACKTRACES
+#include <stacktrace>
+#endif
 inline bool check_alc_errors(ALCdevice *device)
 {
     const auto error = alcGetError(device);
     if (error != ALC_NO_ERROR) {
-        // std::cerr << "***ERROR*** (" << filename << ": " << line << ")\n";
+       
         switch (error) {
         case ALC_INVALID_VALUE:
             std::cerr << "ALC_INVALID_VALUE: an invalid value was passed to an OpenAL function";
@@ -27,7 +29,10 @@ inline bool check_alc_errors(ALCdevice *device)
         default:
             std::cerr << "UNKNOWN ALC ERROR: " << error;
         }
-        std::cerr << std::endl;
+#ifdef USE_STACKTRACES
+        std::cerr << "\nstacktrace:\n" << std::stacktrace::current();
+ #endif
+        std::cerr << "\n";
         return false;
     }
     return true;
@@ -56,7 +61,11 @@ inline bool check_al_errors()
         default:
             std::cerr << "UNKNOWN AL ERROR: " << error;
         }
-        std::cerr << std::endl;
+#ifdef USE_STACKTRACES
+        std::cerr << "\nstacktrace:\n" << std::stacktrace::current();
+#endif
+        std::cerr << "\n";
+
         return false;
     }
     return true;

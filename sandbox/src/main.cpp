@@ -1,12 +1,15 @@
 #include "Loader.h"
+#include <SoundEngine.h>
 #include <Source.h>
 #include <chrono>
+#include <coroutine>
 #include <exception>
 #include <fstream>
 #include <future>
 #include <iostream>
-#include <SoundEngine.h>
+#include <ranges>
 #include <thread>
+
 
 void sharedBuffer()
 {
@@ -42,7 +45,8 @@ void queuedBuffer()
 
     auto source = soundEngineX::Source();
 
-    std::shared_ptr<soundEngineX::Buffer> buffer = std::make_unique<soundEngineX::Buffer>( loader.loadMultiple({ "data/test.wav", "data/test.wav" }) );
+    std::shared_ptr<soundEngineX::Buffer> buffer =
+      std::make_unique<soundEngineX::Buffer>(loader.loadMultiple({ "data/click.wav", "data/test.wav" }));
 
     source.attachBuffer(buffer);
 
@@ -57,13 +61,64 @@ void queuedBuffer()
 
     a.wait();
 }
+struct SimpleGenerator
+{
+    SimpleGenerator(std::vector<std::string> &&set)
+      : names(set)
+    {}
+
+    const std::string &make() const
+    {
+        index %= names.size();
+        const auto &ret = names.at(index);
+        ++index;
+        return ret;
+    }
+
+    std::vector<std::string> names;
+    mutable size_t index = 0;
+};
+
+void queuedBufferRepeat()
+{
+    soundEngineX::SoundEngine engine;
+    soundEngineX::loader::Loader loader;
+    auto gen = SimpleGenerator({ "data/click.wav",
+      "data/click.wav",
+      "data/click.wav",
+      "data/test.wav",
+      "data/stop.wav",
+      "data/stop.wav",
+      "data/stop.wav" });
+    auto source = soundEngineX::Source();
+
+    std::shared_ptr<soundEngineX::Buffer> buffer =
+      std::make_unique<soundEngineX::Buffer>(loader.loadMultiple({ "data/click.wav", "data/test.wav" }));
+    buffer->setRequestNewDataCallback([&loader, &gen](auto size_to_load) {//
+        auto files = std::vector<std::string>(size_to_load);
+        std::generate(files.begin(), files.end(), [&gen]() { return gen.make(); });
+        return loader.loadMultiple(files);
+
+    });
+
+    source.attachBuffer(buffer);
 
 
+    source.setSourceConfig({
+      .pitch = 3.5,
+      .gain = 1,
+    });
+
+    auto a = std::async(std::launch::async, [&source]() { source.play(); });
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    a.wait();
+}
 // https://github.com/ErikMcClure/tinyoal/tree/main/TinyOAL
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
 try
 {
-    queuedBuffer();
+    queuedBufferRepeat();
     return 0;
 
 
