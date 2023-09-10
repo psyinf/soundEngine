@@ -1,10 +1,9 @@
 #pragma once
+#include "ErrorTrace.h"
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <iostream>
-#ifdef USE_STACKTRACES
-#include <stacktrace>
-#endif
+
 inline bool check_alc_errors(ALCdevice *device)
 {
     const auto error = alcGetError(device);
@@ -29,14 +28,13 @@ inline bool check_alc_errors(ALCdevice *device)
         default:
             std::cerr << "UNKNOWN ALC ERROR: " << error;
         }
-#ifdef USE_STACKTRACES
-        std::cerr << "\nstacktrace:\n" << std::stacktrace::current();
- #endif
+        errorTrace::printErrorTrace();
         std::cerr << "\n";
         return false;
     }
     return true;
 }
+
 inline bool check_al_errors()
 {
     const auto error = alGetError();
@@ -61,9 +59,7 @@ inline bool check_al_errors()
         default:
             std::cerr << "UNKNOWN AL ERROR: " << error;
         }
-#ifdef USE_STACKTRACES
-        std::cerr << "\nstacktrace:\n" << std::stacktrace::current();
-#endif
+        errorTrace::printErrorTrace();
         std::cerr << "\n";
 
         return false;

@@ -2,7 +2,10 @@ project(soundEngine LANGUAGES CXX)
 include(GNUInstallDirs)
 add_code_coverage()
 find_package(OpenAL REQUIRED)
-
+find_package(ALSA)
+if (ALSA_FOUND)
+    set(ADDITIONAL_LIBS ALSA::ALSA)
+endif()
 add_library(${PROJECT_NAME} STATIC)
 
 target_sources(${PROJECT_NAME} 
@@ -15,7 +18,7 @@ target_sources(${PROJECT_NAME}
          
         "Types.h" 
         "Loader.h" "Loader.cpp" 
-        "Buffer.h" "Buffer.cpp")
+        "Buffer.h" "Buffer.cpp" "ErrorTrace.h")
 
 target_include_directories(
     ${PROJECT_NAME}
@@ -26,6 +29,7 @@ target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC
         OpenAL::OpenAL
+        ${ADDITIONAL_LIBS}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES 
