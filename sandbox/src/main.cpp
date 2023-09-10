@@ -63,20 +63,27 @@ void queuedBuffer()
 }
 struct SimpleGenerator
 {
-    SimpleGenerator(std::vector<std::string> &&set)
+    SimpleGenerator(std::vector<std::string> &&set, size_t times)
       : names(set)
+      , makesLeft(times * names.size())
     {}
-
+    size_t getMakesLeft() const { return makesLeft; }
     const std::string &make() const
     {
+        if (0 == getMakesLeft())
+        {
+            throw std::runtime_error("No more makes left");
+        }
         index %= names.size();
         const auto &ret = names.at(index);
         ++index;
+        --makesLeft;
         return ret;
     }
 
     std::vector<std::string> names;
-    mutable size_t index = 0;
+    mutable size_t index{};
+    mutable size_t makesLeft{};
 };
 
 void queuedBufferRepeat()
@@ -84,18 +91,18 @@ void queuedBufferRepeat()
     soundEngineX::SoundEngine engine;
     soundEngineX::loader::Loader loader;
     auto gen = SimpleGenerator({ "data/click.wav",
-      "data/click.wav",
-      "data/click.wav",
-      "data/test.wav",
-      "data/stop.wav",
-      "data/stop.wav",
-      "data/stop.wav" });
+                                 "data/click.wav",
+                                 "data/click.wav",
+                                 "data/stop.wav",
+                                 "data/stop.wav",
+                                 "data/stop.wav" },
+      3);
     auto source = soundEngineX::Source();
 
     std::shared_ptr<soundEngineX::Buffer> buffer =
       std::make_unique<soundEngineX::Buffer>(loader.loadMultiple({ "data/click.wav", "data/test.wav" }));
     buffer->setRequestNewDataCallback([&loader, &gen](auto size_to_load) {//
-        auto files = std::vector<std::string>(size_to_load);
+        auto files = std::vector<std::string>(std::min(size_to_load, gen.getMakesLeft()));
         std::generate(files.begin(), files.end(), [&gen]() { return gen.make(); });
         return loader.loadMultiple(files);
 

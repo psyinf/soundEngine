@@ -5,7 +5,7 @@ class sound(ConanFile):
     name = "sound"
     version = "0.1"
     settings = "os", "compiler", "build_type", "arch"
-    requires = [ ("openal/1.22.2")  
+    requires = [ ("openal-soft/1.22.2")  
                 ,("catch2/3.4.0")
                ]
     generators = ["CMakeToolchain" , "CMakeDeps"]
