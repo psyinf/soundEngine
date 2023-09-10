@@ -29,6 +29,8 @@ jobs:
       uses: turtlebrowser/get-conan@main
       with:
         version: 1.60.2
+    - name: setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@master    
     - name: Setup LCOV
       uses: hrishikesh-kadam/setup-lcov@v1    
     - name: Install GCC prepare env
