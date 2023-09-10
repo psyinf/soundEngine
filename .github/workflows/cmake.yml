@@ -10,15 +10,14 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
 
-jobs:
-  example_matrix:
+jobs:   
+  build:
     strategy:
       matrix:
         compiler: [gcc, clang]
         build_type: [debug, release]
         os: [ubuntu]
-  build:
-    runs_on: ${os}-latest
+    runs-on: ${{ matrix.os }}-latest
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
@@ -37,15 +36,24 @@ jobs:
       with:
         version: 11
         platform: x64 
+    - name: Using the builtin GitHub Cache Action for .conan
+      id: github-cache-conan
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-conan-modules
+      with:
+        path: ${{ env.CONAN_USER_HOME }}
+        key: host-${{ runner.os }}-target-${{ runner.os }}-${{ hashFiles('conanfile.py') }}
+    
     - name: Create default Conan profile
       run: conan profile new default --detect    
     - name: Conan profile update
       run:  |
             conan profile update conf.tools.system.package_manager:mode=install default
             conan profile update conf.tools.system.package_manager:sudo=True default    
-    - name: Run CMake consuming CMakePresets.json and vcpkg.json by mean of vcpkg.
-        uses: lukka/run-cmake@v10
-        with:
-          configurePreset: unixlike-${compiler}-${build_type}
-          buildPreset: unixlike-${compiler}-${build_type}
-          #testPreset: 'ninja-multi-vcpkg'
+    - name: Run CMake consuming CMakePresets.json 
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: unixlike-${{ matrix.compiler }}-${{ matrix.build_type }}
+        buildPreset: unixlike-${{ matrix.compiler }}-${{ matrix.build_type }}
+       #testPreset: 'ninja-multi-vcpkg'
