@@ -23,9 +23,9 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     steps:
     - uses: actions/checkout@v3
-    - name: Install llvm-cov 
+    - name: Install llvm
       run: | 
-        apt-get install llvm-cov
+        sudo apt-get install llvm
     - name: Install Conan
       id: conan
       uses: turtlebrowser/get-conan@main
