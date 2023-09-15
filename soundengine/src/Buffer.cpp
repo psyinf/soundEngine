@@ -36,27 +36,25 @@ ALenum getStereoFormat(uint8_t bitDepth)
         break;
     }
 }
-}// namespace internal
+} // namespace internal
 
-
-soundEngineX::Buffer::Buffer(const DataDescriptor &data)
+soundEngineX::Buffer::Buffer(const DataDescriptor& data)
   : Buffer(data.chunks.size())
-  
 {
     requestMoreDataCallback = (data.requestMoreDataCallback);
     for (auto i = 0; i < data.chunks.size(); ++i)
     {
         alCallImpl(alBufferData,
-          buffers[i],
-          determineFormatType(data.chunks[i].format),
-          data.chunks[i].data.data(),
-          data.chunks[i].data.size(),
-          data.chunks[i].format.sampleRateHz);
+                   buffers[i],
+                   determineFormatType(data.chunks[i].format),
+                   data.chunks[i].data.data(),
+                   data.chunks[i].data.size(),
+                   data.chunks[i].format.sampleRateHz);
     }
 }
 
-soundEngineX::Buffer::Buffer(DataDescriptor &&data)
-  : Buffer(data.chunks.size()) 
+soundEngineX::Buffer::Buffer(DataDescriptor&& data)
+  : Buffer(data.chunks.size())
 {
     requestMoreDataCallback = (data.requestMoreDataCallback);
     for (auto i = 0; i < data.chunks.size(); ++i)
@@ -65,8 +63,7 @@ soundEngineX::Buffer::Buffer(DataDescriptor &&data)
     }
 }
 
-
-soundEngineX::Buffer::Buffer(Buffer &&other) noexcept
+soundEngineX::Buffer::Buffer(Buffer&& other) noexcept
   : buffers(std::move(other.buffers))
 {
     other.buffers = {};
@@ -87,8 +84,7 @@ soundEngineX::Buffer::~Buffer()
     alCallImpl(alDeleteBuffers, buffers.size(), buffers.data());
 }
 
-
-std::vector<ALuint> soundEngineX::Buffer::buffersUnqueued(const std::vector<ALuint> &unqueuedBuffers)
+std::vector<ALuint> soundEngineX::Buffer::buffersUnqueued(const std::vector<ALuint>& unqueuedBuffers)
 {
     freeBuffers.insert(freeBuffers.end(), unqueuedBuffers.begin(), unqueuedBuffers.end());
 
@@ -98,32 +94,31 @@ std::vector<ALuint> soundEngineX::Buffer::buffersUnqueued(const std::vector<ALui
     {
         auto data = requestMoreDataCallback(unqueuedBuffers.size());
         newBuffers = data.chunks.size();
-        for (const auto &chunk : data.chunks)
+        for (const auto& chunk : data.chunks)
         {
             setBufferData(chunk, freeBuffers.front());
             freeBuffers.pop_front();
         }
     }
-    return { unqueuedBuffers.begin(), unqueuedBuffers.begin() + newBuffers };
+    return {unqueuedBuffers.begin(), unqueuedBuffers.begin() + newBuffers};
 }
 
-
-void soundEngineX::Buffer::setBufferData(const auto &chunk, ALuint targetBuffer)
+void soundEngineX::Buffer::setBufferData(const auto& chunk, ALuint targetBuffer)
 {
     alCallImpl(alBufferData,
-      targetBuffer,
-      determineFormatType(chunk.format),
-      chunk.data.data(),
-      chunk.data.size(),
-      chunk.format.sampleRateHz);
+               targetBuffer,
+               determineFormatType(chunk.format),
+               chunk.data.data(),
+               chunk.data.size(),
+               chunk.format.sampleRateHz);
 }
 
-const std::vector<ALuint> &soundEngineX::Buffer::getHandles() const
+const std::vector<ALuint>& soundEngineX::Buffer::getHandles() const
 {
     return buffers;
 }
 
-soundEngineX::Buffer::FormatType soundEngineX::Buffer::determineFormatType(const FormatDescriptor &format) const
+soundEngineX::Buffer::FormatType soundEngineX::Buffer::determineFormatType(const FormatDescriptor& format) const
 {
     switch (format.channels)
     {

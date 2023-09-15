@@ -6,21 +6,24 @@
 namespace soundEngineX {
 struct Device
 {
-    ALCdevice *device = nullptr;
+    ALCdevice* device = nullptr;
 
-    operator ALCdevice *() { return device; }
+    operator ALCdevice*() { return device; }
 };
-
 
 struct Context
 {
-    Context(ALCcontext *c) : context(c) {}
+    Context(ALCcontext* c)
+      : context(c)
+    {
+    }
 
-    ALCcontext *context = nullptr;
+    ALCcontext* context = nullptr;
 
-    operator ALCcontext *() { return context; }
-    operator ALCcontext const *() { return context; }
+    operator ALCcontext*() { return context; }
+
+    operator ALCcontext const*() { return context; }
 
     bool operator!() { return !context; }
 };
-}// namespace soundEngineX  
+} // namespace soundEngineX

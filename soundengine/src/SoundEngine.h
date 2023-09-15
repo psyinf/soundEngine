@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Types.h"
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <string>
 #include <Buffer.h>
-#include "Types.h"
+#include <string>
 
 #include <memory>
 
@@ -16,14 +16,12 @@ public:
     SoundEngine();
     ~SoundEngine();
 
-
 private:
     void init();
-    void iterateDevices(Device &device);
-     
+    void iterateDevices(Device& device);
 
-    Device device;
-    Context context{ nullptr };  
+    Device  device;
+    Context context{nullptr};
 };
 
-}// namespace soundEngineX
+} // namespace soundEngineX
