@@ -22,7 +22,7 @@ public:
     Source();
     virtual ~Source();
 
-    void attachBuffer(std::shared_ptr<Buffer>& buffer);
+    void attachBuffer(std::shared_ptr<Buffer>  buffer);
     void play();
     void setSourceConfig(const SourceConfiguration &config);
     const SourceConfiguration &getSourceConfiguration() const; 

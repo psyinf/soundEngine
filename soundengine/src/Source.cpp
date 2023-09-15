@@ -59,7 +59,7 @@ void Source::applyConfiguration()
     alCallImpl(alSourcei, source, AL_LOOPING, config.loop);
 }
 
-void Source::attachBuffer(std::shared_ptr<Buffer> &buffer)
+void Source::attachBuffer(std::shared_ptr<Buffer> buffer)
 {
     attachedBuffer = buffer;
     alCallImpl(
