@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.26)
 project(soundengine)
 
 set(CODE_COVERAGE ON)
@@ -12,12 +12,16 @@ include(cmake/configure_analysis.cmake)
 SET(CMAKE_CXX_STANDARD 23)
 #setup conditional compilation of advanced compiler features
 INCLUDE (CheckIncludeFiles)
-CHECK_INCLUDE_FILES ("stacktrace" USE_STACKTRACES)
+CHECK_INCLUDE_FILES("stacktrace" USE_STACKTRACES LANGUAGE CXX)
 if(USE_STACKTRACES)
-add_definitions(-DUSE_STACKTRACES=${USE_STACKTRACES})
+	message("Using stacktraces")
+	add_definitions(-DUSE_STACKTRACES)
+else()	
+	message("Not using stacktraces")
 endif()
 conan_cmake_autodetect(settings)
 conan_cmake_install(PATH_OR_REFERENCE .
+
                     BUILD missing
                     REMOTE conancenter
 				    SETTINGS ${settings})
@@ -32,4 +36,4 @@ install(DIRECTORY
 
 
 add_subdirectory(soundengine)
-add_subdirectory(sandbox)
+add_subdirectory(examples)
