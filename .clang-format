@@ -2,7 +2,7 @@
 BasedOnStyle: Microsoft
 AllowShortLambdasOnASingleLine: All
 AllowAllParametersOfDeclarationOnNextLine: 'false'
-AllowShortFunctionsOnASingleLine: All
+AllowShortFunctionsOnASingleLine: Inline
 BinPackParameters: 'false'
 BinPackArguments: 'false'
 BreakBeforeBraces: Custom
@@ -15,4 +15,10 @@ ConstructorInitializerIndentWidth: 2
 KeepEmptyLinesAtTheStartOfBlocks: 'false'
 MaxEmptyLinesToKeep: 1
 CompactNamespaces: 'true'
+AccessModifierOffset: -4
+SeparateDefinitionBlocks : Always
+AlignConsecutiveDeclarations: 'true'
+BraceWrapping:
+  AfterNamespace:  false
+BreakBeforeBraces: Custom
 ...
