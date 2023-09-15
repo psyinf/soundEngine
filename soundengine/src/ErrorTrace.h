@@ -4,8 +4,8 @@
 #include <stacktrace>
 #endif
 
-namespace errorTrace
-{
+namespace errorTrace {
+
 inline void printErrorTrace()
 {
 #ifdef USE_STACKTRACES

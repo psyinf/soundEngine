@@ -4,12 +4,13 @@
 #include <AL/alc.h>
 #include <iostream>
 
-inline bool check_alc_errors(ALCdevice *device)
+inline bool check_alc_errors(ALCdevice* device)
 {
     const auto error = alcGetError(device);
-    if (error != ALC_NO_ERROR) {
-       
-        switch (error) {
+    if (error != ALC_NO_ERROR)
+    {
+        switch (error)
+        {
         case ALC_INVALID_VALUE:
             std::cerr << "ALC_INVALID_VALUE: an invalid value was passed to an OpenAL function";
             break;
@@ -38,9 +39,11 @@ inline bool check_alc_errors(ALCdevice *device)
 inline bool check_al_errors()
 {
     const auto error = alGetError();
-    if (error != AL_NO_ERROR) {
+    if (error != AL_NO_ERROR)
+    {
         // std::cerr << "***ERROR*** (" << filename << ": " << line << ")\n";
-        switch (error) {
+        switch (error)
+        {
         case AL_INVALID_NAME:
             std::cerr << "AL_INVALID_NAME: a bad name (ID) was passed to an OpenAL function";
             break;
@@ -67,34 +70,34 @@ inline bool check_al_errors()
     return true;
 }
 
-template<typename alcFunction, typename... Params>
-inline auto alcCallImpl(alcFunction function, ALCdevice *device, Params&&... params) ->
-  typename std::enable_if_t<std::is_same_v<void, decltype(function(params...))>, bool>
+template <typename alcFunction, typename... Params>
+inline auto alcCallImpl(alcFunction function, ALCdevice* device, Params&&... params) ->
+    typename std::enable_if_t<std::is_same_v<void, decltype(function(params...))>, bool>
 {
     function(std::forward<Params>(params)...);
     return check_alc_errors(device);
 }
 
-template<typename alcFunction, typename ReturnType, typename... Params>
-inline auto alcCallImpl(alcFunction function, ReturnType &returnValue, ALCdevice *device, Params&&... params) ->
-  typename std::enable_if_t<!std::is_same_v<void, decltype(function(params...))>, bool>
+template <typename alcFunction, typename ReturnType, typename... Params>
+inline auto alcCallImpl(alcFunction function, ReturnType& returnValue, ALCdevice* device, Params&&... params) ->
+    typename std::enable_if_t<!std::is_same_v<void, decltype(function(params...))>, bool>
 {
     returnValue = function(std::forward<Params>(params)...);
     return check_alc_errors(device);
 }
 
-template<typename alFunction, typename... Params>
+template <typename alFunction, typename... Params>
 inline auto alCallImpl(alFunction function, Params&&... params) ->
-  typename std::enable_if_t<!std::is_same_v<void, decltype(function(params...))>, decltype(function(params...))>
+    typename std::enable_if_t<!std::is_same_v<void, decltype(function(params...))>, decltype(function(params...))>
 {
     auto ret = function(std::forward<Params>(params)...);
     check_al_errors();
     return ret;
 }
 
-template<typename alFunction, typename... Params>
+template <typename alFunction, typename... Params>
 inline auto alCallImpl(alFunction function, Params&&... params) ->
-  typename std::enable_if_t<std::is_same_v<void, decltype(function(params...))>, bool>
+    typename std::enable_if_t<std::is_same_v<void, decltype(function(params...))>, bool>
 {
     function(std::forward<Params>(params)...);
     return check_al_errors();

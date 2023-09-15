@@ -10,7 +10,7 @@
 #include <ranges>
 #include <thread>
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
+int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 try
 {
     soundEngineX::SoundEngine engine;
@@ -23,13 +23,13 @@ try
     source.play();
 
     return 0;
-
-
-} catch (const std::exception &e)
+}
+catch (const std::exception& e)
 {
     // TODO: Log exception
     std::cerr << e.what() << std::endl;
-} catch (...)
+}
+catch (...)
 {
     // TODO: Log unknown exception
     std::cerr << "Unknown exception" << std::endl;

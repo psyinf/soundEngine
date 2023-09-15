@@ -10,22 +10,25 @@
 #include <ranges>
 #include <thread>
 
-
 struct SimpleGenerator
 {
-    SimpleGenerator(std::vector<std::string> &&set, size_t times)
+    SimpleGenerator(std::vector<std::string>&& set, size_t times)
       : names(set)
       , makesLeft(times * names.size())
-    {}
-    size_t getMakesLeft() const { return makesLeft; }
-    const std::string &make() const
+    {
+    }
+    size_t getMakesLeft() const
+    {
+        return makesLeft;
+    }
+    const std::string& make() const
     {
         if (0 == getMakesLeft())
         {
             throw std::runtime_error("No more makes left");
         }
         index %= names.size();
-        const auto &ret = names.at(index);
+        const auto& ret = names.at(index);
         ++index;
         --makesLeft;
         return ret;
@@ -40,18 +43,13 @@ void queuedBufferRepeat()
 {
     soundEngineX::SoundEngine engine;
     soundEngineX::loader::Loader loader;
-    auto gen = SimpleGenerator({ "data/click.wav",
-                                 "data/click.wav",
-                                 "data/click.wav",
-                                 "data/stop.wav",
-                                 "data/stop.wav",
-                                 "data/stop.wav" },
-      3);
+    auto gen = SimpleGenerator(
+        {"data/click.wav", "data/click.wav", "data/click.wav", "data/stop.wav", "data/stop.wav", "data/stop.wav"}, 3);
     auto source = soundEngineX::Source();
 
     std::shared_ptr<soundEngineX::Buffer> buffer =
-      std::make_unique<soundEngineX::Buffer>(loader.loadMultiple({ "data/click.wav", "data/test.wav" }));
-    buffer->setRequestNewDataCallback([&loader, &gen](auto size_to_load) {//
+        std::make_unique<soundEngineX::Buffer>(loader.loadMultiple({"data/click.wav", "data/test.wav"}));
+    buffer->setRequestNewDataCallback([&loader, &gen](auto size_to_load) { //
         auto files = std::vector<std::string>(std::min(size_to_load, gen.getMakesLeft()));
         std::generate(files.begin(), files.end(), [&gen]() { return gen.make(); });
         return loader.loadMultiple(files);
@@ -60,10 +58,9 @@ void queuedBufferRepeat()
 
     source.attachBuffer(buffer);
 
-
     source.setSourceConfig({
-      .pitch = 3.5,
-      .gain = 1,
+        .pitch = 3.5,
+        .gain = 1,
     });
 
     auto a = std::async(std::launch::async, [&source]() { source.play(); });
@@ -72,18 +69,18 @@ void queuedBufferRepeat()
     a.wait();
 }
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
+int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 try
 {
     queuedBufferRepeat();
     return 0;
-
-
-} catch (const std::exception &e)
+}
+catch (const std::exception& e)
 {
     // TODO: Log exception
     std::cerr << e.what() << std::endl;
-} catch (...)
+}
+catch (...)
 {
     // TODO: Log unknown exception
     std::cerr << "Unknown exception" << std::endl;

@@ -1,6 +1,6 @@
 #include "Source.h"
-#include "Buffer.h"
 #include "ALHelpers.h"
+#include "Buffer.h"
 #include <AL/al.h>
 #include <AL/alc.h>
 
@@ -19,7 +19,7 @@ Source::~Source()
 void Source::play()
 {
     applyConfiguration();
-   
+
     alCallImpl(alSourcePlay, source);
     for (ALint state = AL_PLAYING; state == AL_PLAYING;)
     {
@@ -41,13 +41,12 @@ void Source::play()
     }
 }
 
-
-void Source::setSourceConfig(const SourceConfiguration &config)
+void Source::setSourceConfig(const SourceConfiguration& config)
 {
     this->config = config;
 }
 
-const SourceConfiguration &Source::getSourceConfiguration() const
+const SourceConfiguration& Source::getSourceConfiguration() const
 {
     return config;
 }
@@ -63,5 +62,5 @@ void Source::attachBuffer(std::shared_ptr<Buffer> buffer)
 {
     attachedBuffer = buffer;
     alCallImpl(
-      alSourceQueueBuffers, source, static_cast<ALsizei>(buffer->getHandles().size()), buffer->getHandles().data());
+        alSourceQueueBuffers, source, static_cast<ALsizei>(buffer->getHandles().size()), buffer->getHandles().data());
 }
