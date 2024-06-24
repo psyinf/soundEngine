@@ -33,10 +33,10 @@ static void load_wav_file_header(std::istream& file, FormatDescriptor& format, s
     file.read(reinterpret_cast<char*>(&header), 44); // TODO: replace 44 with size of struct?
     // TODO: check header values
 
-    format.channels = h.numChannels;
-    format.bitsPerSample = h.bitsPerSample;
-    format.sampleRateHz = h.samplesPerSec;
-    size = h.dataSize;
+    format.channels = header.numChannels;
+    format.bitsPerSample = header.bitsPerSample;
+    format.sampleRateHz = header.samplesPerSec;
+    size = header.dataSize;
 }
 
 static std::tuple<std::vector<char>, FormatDescriptor> load_wav(std::istream& in)
