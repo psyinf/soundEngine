@@ -1,5 +1,5 @@
-
-# detect if Catch is being bundled,
+cmake_minimum_required(VERSION 3.22)
+# detect if being bundled,
 # disable testsuite in that case
 if(NOT DEFINED PROJECT_NAME)
   set(NOT_SUBPROJECT ON)
@@ -7,7 +7,7 @@ else()
   set(NOT_SUBPROJECT OFF)
 endif()
 
-cmake_minimum_required(VERSION 3.22)
+
 project(soundengine)
 set(CMAKE_CXX_STANDARD 23)  
 set(CMAKE_CXX_STANDARD_REQUIRED True)
