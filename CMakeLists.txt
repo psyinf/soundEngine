@@ -1,3 +1,12 @@
+
+# detect if Catch is being bundled,
+# disable testsuite in that case
+if(NOT DEFINED PROJECT_NAME)
+  set(NOT_SUBPROJECT ON)
+else()
+  set(NOT_SUBPROJECT OFF)
+endif()
+
 cmake_minimum_required(VERSION 3.22)
 project(soundengine)
 set(CMAKE_CXX_STANDARD 23)  
@@ -11,7 +20,9 @@ include(cmake/setup_cpm.cmake)
 include(cmake/deps_cpm.cmake)
 
 add_subdirectory(soundengine)
-add_subdirectory(sandbox)
+if (NOT_SUBPROJECT)
+  add_subdirectory(sandbox)
+endif()
 
 install(DIRECTORY
 		data
