@@ -4,13 +4,13 @@
 #include <stacktrace>
 #endif
 
-namespace errorTrace
-{
+namespace errorTrace {
+
 inline void printErrorTrace()
 {
 #ifdef USE_STACKTRACES
     auto&& trace = std::stacktrace::current();
-    std::cerr << trace << std::endl;
+    std::cerr << "Stacktrace:\n" << trace << std::endl;
 #endif
 }
 } // namespace errorTrace

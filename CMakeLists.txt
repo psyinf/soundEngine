@@ -21,7 +21,7 @@ include(cmake/deps_cpm.cmake)
 
 add_subdirectory(soundengine)
 if (NOT_SUBPROJECT)
-  add_subdirectory(sandbox)
+  add_subdirectory(examples)
 endif()
 
 install(DIRECTORY
