@@ -7,6 +7,7 @@ if (ALSA_FOUND)
     set(ADDITIONAL_LIBS ALSA::ALSA)
 endif()
 add_library(${PROJECT_NAME} STATIC)
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} 
     PRIVATE

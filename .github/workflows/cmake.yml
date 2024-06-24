@@ -5,43 +5,45 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-
+  CONAN_USER_HOME: "${{ github.workspace }}/release/"
+  CONAN_USER_HOME_SHORT: "${{ github.workspace }}/release/short"
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
-    # You can convert this to a matrix build if you need cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        #version: [10, 12, 14]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Install Conan
-      id: conan
-      uses: turtlebrowser/get-conan@main
-      with:
-        version: 1.60.2
     - name: Setup LCOV
       uses: hrishikesh-kadam/setup-lcov@v1    
     - name: Install GCC prepare env
       uses: egor-tensin/setup-gcc@v1
+    - name: Set up cache
+      id: cache-cpm
+      uses: actions/cache@v2
       with:
-        version: 11
-        platform: x64 
-    - name: Create default Conan profile
-      run: conan profile new default --detect    
-    - name: Conan profile update
-      run:  |
-            conan profile update conf.tools.system.package_manager:mode=install default
-            conan profile update conf.tools.system.package_manager:sudo=True default    
+       path: ~/cpm-cache
+       key: ${{ runner.os }}-cpm-${{ hashFiles('**/') }}
+       restore-keys: |
+         ${{ runner.os }}-cpm-    
+    - uses: actions/checkout@v3
+    - name: Setup GCC
+      uses: pkgxdev/setup@v1
+      with:
+        +: gcc@14
+
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCPM_SOURCE_CACHE=~/cpm-cache
     
     - name: Build
       # Build your program with the given configuration
