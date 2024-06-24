@@ -13,6 +13,7 @@ target_sources(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		soundEngine
+        ${ADDITION_LIBS}
 )
 target_code_coverage(${PROJECT_NAME})
 install(TARGETS ${PROJECT_NAME}

@@ -176,10 +176,10 @@ if(CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
       )
     endif()
     if(NOT LCOV_PATH)
-      message(FATAL_ERROR "lcov not found! Aborting...")
+      message(WARNING "lcov not found! Not checking coverage")
     endif()
     if(NOT GENHTML_PATH)
-      message(FATAL_ERROR "genhtml not found! Aborting...")
+      message(WARNING "genhtml not found!  Not creating coverage report")
     endif()
 
     # Targets
