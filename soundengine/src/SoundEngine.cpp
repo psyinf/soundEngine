@@ -54,7 +54,7 @@ void SoundEngine::init()
     // alcCallImpl(alcIsExtensionPresent(ALCdevice * device, const ALCchar *extName);
 }
 
-void SoundEngine::iterateDevices(Device& device)
+void SoundEngine::iterateDevices(Device&)
 {
     // LATER:
     /*

@@ -18,7 +18,7 @@ target_sources(${PROJECT_NAME}
         "Source.h" "Source.cpp" 
          
         "Types.h" 
-        "Loader.h" "Loader.cpp" 
+        "Loader.h" "Loader.cpp" "LoadWave.cpp"
         "Buffer.h" "Buffer.cpp" "ErrorTrace.h")
 
 target_include_directories(

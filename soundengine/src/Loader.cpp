@@ -16,8 +16,8 @@ DataDescriptor load(std::istream&& stream, Type type)
     switch (type)
     {
     case Type::WAV: {
-        auto&& [data, format] = load_wav(stream);
-        return DataDescriptor{.chunks = {{.format = format, .data = data}}};
+        auto&& chunk = soundEngineX::format::load_wav(stream);
+        return DataDescriptor{{chunk}};
     }
     break;
     default:
