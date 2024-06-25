@@ -5,13 +5,13 @@
 
 namespace soundEngineX::loader {
 
-DataDescriptor Loader::load(std::string_view name)
+DataDescriptor load(std::string_view name)
 {
     auto type = getType(name);
     return load(std::ifstream(name.data(), std::ios::binary), type);
 }
 
-DataDescriptor Loader::load(std::istream&& stream, Type type)
+DataDescriptor load(std::istream&& stream, Type type)
 {
     switch (type)
     {
@@ -26,7 +26,7 @@ DataDescriptor Loader::load(std::istream&& stream, Type type)
     }
 }
 
-DataDescriptor Loader::loadMultiple(const std::vector<std::string>& names)
+DataDescriptor loadMultiple(const std::vector<std::string>& names)
 {
     DataDescriptor dataDescriptor{};
     for (const auto& name : names)
@@ -38,18 +38,12 @@ DataDescriptor Loader::loadMultiple(const std::vector<std::string>& names)
     return dataDescriptor;
 }
 
-soundEngineX::loader::Type Loader::getType(std::string_view name) const
+Type getType(std::string_view name)
 {
     auto extension = std::filesystem::path(name).extension().string();
     std::transform(extension.begin(), extension.end(), extension.begin(), [](auto c) { return std::tolower(c); });
-    if (extension == ".wav")
-    {
-        return Type::WAV;
-    }
-    else
-    {
-        throw std::invalid_argument("Cannot determine file type from extension");
-    }
+    if (extension == ".wav") { return Type::WAV; }
+    else { throw std::invalid_argument("Cannot determine file type from extension"); }
 }
 
 } // namespace soundEngineX::loader

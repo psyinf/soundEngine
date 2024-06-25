@@ -3,6 +3,9 @@ BasedOnStyle: Microsoft
 AllowShortLambdasOnASingleLine: All
 AllowAllParametersOfDeclarationOnNextLine: 'false'
 AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: 'true'
+AllowShortBlocksOnASingleLine :  'true'
+AlwaysBreakTemplateDeclarations: Yes
 BinPackParameters: 'false'
 BinPackArguments: 'false'
 BreakBeforeBraces: Custom
@@ -20,5 +23,6 @@ SeparateDefinitionBlocks : Always
 AlignConsecutiveDeclarations: 'true'
 BraceWrapping:
   AfterNamespace:  false
-BreakBeforeBraces: Custom
+SortIncludes: false
+ColumnLimit: 120
 ...

@@ -13,10 +13,10 @@
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 try
 {
+    // initialize a SoundEngine instance
     soundEngineX::SoundEngine engine;
-    soundEngineX::loader::Loader loader;
-
-    auto buffer = std::make_unique<soundEngineX::Buffer>(loader.load("data/click.wav"));
+    // build a buffer from an example file
+    auto buffer = std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load("data/click.wav"));
     auto source = soundEngineX::Source();
     source.attachBuffer(std::move(buffer));
 

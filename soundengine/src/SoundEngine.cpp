@@ -21,7 +21,7 @@ SoundEngine::SoundEngine()
 SoundEngine::~SoundEngine()
 {
     if (ALCboolean closed; !alcCallImpl(alcCloseDevice, closed, device, device))
-    { /* do we care? */
+    { // do we care?
     }
     if (ALCboolean contextMadeCurrent; !alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, device, nullptr))
     { /* what can you do? */

@@ -6,11 +6,6 @@ namespace soundEngineX {
 
 class Buffer;
 
-/**
- * Abstract sound source, with a audio buffer attached
- * Possibly later: Options for looping, pitch, volume, etc.
- */
-
 struct SourceConfiguration
 {
     float pitch{1.0};
@@ -18,10 +13,18 @@ struct SourceConfiguration
     bool  loop{false};
 };
 
+/**
+ * Abstract sound source, with a audio buffer attached
+ * Possibly later: Options for looping, pitch, volume, etc.
+ * Thin wrapper around the source descriptor. Copies will share the buffer
+ */
+
 class Source
 {
 public:
     Source();
+    Source(Source&&) = default;
+
     virtual ~Source();
 
     void                       attachBuffer(std::shared_ptr<Buffer> buffer);
