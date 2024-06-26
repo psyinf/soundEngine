@@ -45,6 +45,7 @@ void queuedBufferRepeat()
 
     std::shared_ptr<soundEngineX::Buffer> buffer =
         std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::loadMultiple({"data/click.wav", "data/test.wav"}));
+
     buffer->setRequestNewDataCallback([&gen](auto size_to_load) { //
         auto files = std::vector<std::string>(std::min(size_to_load, gen.getMakesLeft()));
         std::generate(files.begin(), files.end(), [&gen]() { return gen.make(); });
@@ -57,6 +58,7 @@ void queuedBufferRepeat()
     source.setSourceConfig({
         .pitch = 3.5,
         .gain = 1,
+        .stream = true, // we need to inform the source to use the newDataCallback
     });
 
     auto a = std::async(std::launch::async, [&source]() { source.play(); });
