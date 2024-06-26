@@ -1,29 +1,27 @@
 #pragma once
 
+#include "Types.h"
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <string>
 #include <Buffer.h>
-#include "Types.h"
+#include <Source.h>
+#include <string>
 
 #include <memory>
 
 namespace soundEngineX {
-
 class SoundEngine
 {
 public:
     SoundEngine();
     ~SoundEngine();
 
-
 private:
     void init();
-    void iterateDevices(Device &device);
-     
+    void iterateDevices(std::vector<std::string>& devices);
 
-    Device device;
-    Context context{ nullptr };  
+    Device  device;
+    Context context{nullptr};
 };
 
-}// namespace soundEngineX
+} // namespace soundEngineX

@@ -8,60 +8,69 @@
 #include <string_view>
 
 #include "ALHelpers.h"
-#include "LoadWave.h"
+#include "loaders/LoadWave.h"
 #include <Buffer.h>
 #include <Loader.h>
 using namespace soundEngineX;
 
-
-SoundEngine::SoundEngine() { init(); }
+SoundEngine::SoundEngine()
+{
+    std::vector<std::string> devices;
+    iterateDevices(devices);
+    spdlog::debug("Available devices:");
+    for (const auto& device : devices)
+    {
+        spdlog::debug("Device: {}", device);
+    }
+    init();
+}
 
 SoundEngine::~SoundEngine()
 {
-    if (ALCboolean closed; !alcCallImpl(alcCloseDevice, closed, device, device)) { /* do we care? */
-    }
-    if (ALCboolean contextMadeCurrent; !alcCallImpl(
-          alcMakeContextCurrent, contextMadeCurrent, device, nullptr)) { /* what can you do? */
+    spdlog::debug("Destroying sound engine");
+    if (ALCboolean contextMadeCurrent; !alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, device, nullptr))
+    { /* what can you do? */
     }
 
-    if (!alcCallImpl(alcDestroyContext, device, context)) { /* not much you can do */
+    if (!alcCallImpl(alcDestroyContext, device, context.context))
+    { /* not much you can do */
     }
+    if (ALCboolean closed; !alcCallImpl(alcCloseDevice, closed, device, device))
+    { // do we care?
+    }
+    spdlog::debug("Sound engine destroyed");
 }
 
 void SoundEngine::init()
 {
-    device = { alcOpenDevice(nullptr) };
+    device = {alcOpenDevice(nullptr)};
 
-    if (!alcCallImpl(alcCreateContext, context, device, device, nullptr) || !context) {
-        std::cerr << "ERROR: Could not create audio context" << std::endl;
+    if (!alcCallImpl(alcCreateContext, context, device, device, nullptr) || !context)
+    {
         /* probably exit program */
         throw std::runtime_error("Could not create audio context");
     }
 
     ALCboolean contextMadeCurrent = false;
-    if (!alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, device, context) || contextMadeCurrent != ALC_TRUE) {
-        std::cerr << "ERROR: Could not make audio context current" << std::endl;
+    if (!alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, device, context) || contextMadeCurrent != ALC_TRUE)
+    {
         /* probably exit or give up on having sound */
         throw std::runtime_error("Could not make audio context current");
     }
 
-    //alcCallImpl(alcIsExtensionPresent(ALCdevice * device, const ALCchar *extName);
+    // alcCallImpl(alcIsExtensionPresent(ALCdevice * device, const ALCchar *extName);
 }
 
-
-void SoundEngine::iterateDevices(Device &device)
+void SoundEngine::iterateDevices(std::vector<std::string>& devicesVec)
 {
-    // LATER:
-    /*
-    const ALCchar *devices;
+    const ALCchar* devices;
+    if (!alcCallImpl(alcGetString, devices, device, nullptr, ALC_DEVICE_SPECIFIER)) return;
 
-    if (alcCallImpl(alcGetString, devices, device, nullptr, ALC_ALL_DEVICES_SPECIFIER)) {
+    const char* ptr = devices;
 
-         auto split = std | std::ranges::views::split(' ') | std::ranges::views::transform([](auto &&str) {
-            return std::string_view(&*str.begin(), std::ranges::distance(str));
-        });
-
-        for (auto &&word : split) { std::cout << word << std::endl; }
-    }
-    */
+    do
+    {
+        devicesVec.push_back(std::string(ptr));
+        ptr += devicesVec.back().size() + 1;
+    } while (*(ptr + 1) != '\0');
 }

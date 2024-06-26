@@ -2,25 +2,19 @@
 #include "Buffer.h"
 #include <istream>
 #include <vector>
+
 namespace soundEngineX::loader {
 
-
-enum class Type {
-    WAV,
-};
-class Loader
+enum class Type
 {
-public:
-    Loader() = default;
-
-
-    DataDescriptor load(std::string_view name);
-    DataDescriptor load(std::istream &&stream, Type type);
-
-    DataDescriptor loadMultiple(const std::vector<std::string> &names);
-
-    Type getType(std::string_view name) const;
+    WAV,
+    MP3,
 };
 
+DataDescriptor load(std::string_view name);
+DataDescriptor load(std::string_view name, Type type);
+DataDescriptor loadMultiple(const std::vector<std::string>& names);
 
-}// namespace soundEngineX::loader
+Type getType(std::string_view name);
+
+} // namespace soundEngineX::loader
