@@ -5,6 +5,7 @@
 #include <deque>
 #include <functional>
 #include <vector>
+#include <mutex>
 
 namespace soundEngineX {
 
@@ -65,6 +66,7 @@ private:
     std::deque<ALuint>  freeBuffers; //> AL buffer handles that are free to be used
 
     DataDescriptor::RequestDataFunction requestMoreDataCallback;
+    std::mutex                          dataCallbackMutex;
 };
 
 } // namespace soundEngineX

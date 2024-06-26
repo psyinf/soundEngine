@@ -41,7 +41,9 @@ DataDescriptor loadMultiple(const std::vector<std::string>& names)
 Type getType(std::string_view name)
 {
     auto extension = std::filesystem::path(name).extension().string();
-    std::transform(extension.begin(), extension.end(), extension.begin(), [](auto c) { return std::tolower(c); });
+    std::transform(extension.begin(), extension.end(), extension.begin(), [](auto c) {
+        return static_cast<char>(std::tolower(c));
+    });
     if (extension == ".wav") { return Type::WAV; }
     else { throw std::invalid_argument("Cannot determine file type from extension"); }
 }

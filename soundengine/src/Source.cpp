@@ -8,59 +8,86 @@ using namespace soundEngineX;
 
 Source::Source()
 {
-    alCallImpl(alGenSources, 1, &source);
+    alCallImpl(alGenSources, 1, &_sourceId);
+}
+
+Source::Source(std::shared_ptr<Buffer>& buffer)
+  : Source()
+{
+    attachBuffer(buffer);
+}
+
+Source::Source(Buffer&& buffer)
+  : Source()
+{
+    attachBuffer(std::make_unique<Buffer>(std::move(buffer)));
 }
 
 Source::~Source()
 {
-    alCallImpl(alDeleteSources, 1, &source);
+    if (_sourceId) { alCallImpl(alDeleteSources, 1, &_sourceId); }
 }
 
 void Source::play()
 {
     applyConfiguration();
 
-    alCallImpl(alSourcePlay, source);
-    for (ALint state = AL_PLAYING; state == AL_PLAYING;)
+    alCallImpl(alSourcePlay, _sourceId);
+    if (_config.stream)
     {
-        ALint buffersProcessed = 0;
-        alCallImpl(alGetSourcei, source, AL_SOURCE_STATE, &state);
-        alCallImpl(alGetSourcei, source, AL_BUFFERS_PROCESSED, &buffersProcessed);
-        if (0 == buffersProcessed)
+        for (ALint state = AL_PLAYING; state == AL_PLAYING;)
         {
-            continue;
+            ALint buffersProcessed = 0;
+            alCallImpl(alGetSourcei, _sourceId, AL_SOURCE_STATE, &state);
+            alCallImpl(alGetSourcei, _sourceId, AL_BUFFERS_PROCESSED, &buffersProcessed);
+            if (0 == buffersProcessed) { continue; }
+            std::vector<ALuint> buffers(buffersProcessed);
+            alCallImpl(alSourceUnqueueBuffers, _sourceId, buffersProcessed, buffers.data());
+            auto newBuffers = _attachedBuffer->buffersUnqueued(buffers);
+            if (!newBuffers.empty())
+            {
+                alCallImpl(alSourceQueueBuffers, _sourceId, static_cast<ALsizei>(newBuffers.size()), newBuffers.data());
+                alCallImpl(alSourcePlay, _sourceId);
+            }
         }
-        std::vector<ALuint> buffers(buffersProcessed);
-        alCallImpl(alSourceUnqueueBuffers, source, buffersProcessed, buffers.data());
-        auto newBuffers = attachedBuffer->buffersUnqueued(buffers);
-        if (!newBuffers.empty())
+    }
+    else
+    {
+        ALint state = AL_PLAYING;
+        while (state == AL_PLAYING)
         {
-            alCallImpl(alSourceQueueBuffers, source, static_cast<ALsizei>(newBuffers.size()), newBuffers.data());
-            alCallImpl(alSourcePlay, source);
+            alCallImpl(alGetSourcei, _sourceId, AL_SOURCE_STATE, &state);
         }
     }
 }
 
 void Source::setSourceConfig(const SourceConfiguration& config)
 {
-    this->config = config;
+    this->_config = config;
 }
 
 const SourceConfiguration& Source::getSourceConfiguration() const
 {
-    return config;
+    return _config;
 }
 
 void Source::applyConfiguration()
 {
-    alCallImpl(alSourcef, source, AL_PITCH, config.pitch);
-    alCallImpl(alSourcef, source, AL_GAIN, config.gain);
-    alCallImpl(alSourcei, source, AL_LOOPING, config.loop);
+    alCallImpl(alSourcef, _sourceId, AL_PITCH, _config.pitch);
+    alCallImpl(alSourcef, _sourceId, AL_GAIN, _config.gain);
+    alCallImpl(alSourcei, _sourceId, AL_LOOPING, _config.loop);
 }
 
 void Source::attachBuffer(std::shared_ptr<Buffer> buffer)
 {
-    attachedBuffer = buffer;
-    alCallImpl(
-        alSourceQueueBuffers, source, static_cast<ALsizei>(buffer->getHandles().size()), buffer->getHandles().data());
+    _attachedBuffer = buffer;
+    alCallImpl(alSourceQueueBuffers,
+               _sourceId,
+               static_cast<ALsizei>(buffer->getHandles().size()),
+               buffer->getHandles().data());
+}
+
+std::future<void> Source::playAsync()
+{
+    return std::async(std::launch::async, [&]() { play(); });
 }

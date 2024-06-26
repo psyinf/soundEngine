@@ -72,10 +72,7 @@ soundEngineX::Buffer::Buffer(Buffer&& other) noexcept
 soundEngineX::Buffer::Buffer(size_t num_chunks)
   : buffers(num_chunks)
 {
-    if (num_chunks == 0)
-    {
-        throw std::invalid_argument("Number of chunks must be greater than 0");
-    }
+    if (num_chunks == 0) { throw std::invalid_argument("Number of chunks must be greater than 0"); }
     alCallImpl(alGenBuffers, buffers.size(), buffers.data());
 }
 
@@ -86,6 +83,8 @@ soundEngineX::Buffer::~Buffer()
 
 std::vector<ALuint> soundEngineX::Buffer::buffersUnqueued(const std::vector<ALuint>& unqueuedBuffers)
 {
+    // lock mutex
+    std::lock_guard<std::mutex> lock(dataCallbackMutex);
     freeBuffers.insert(freeBuffers.end(), unqueuedBuffers.begin(), unqueuedBuffers.end());
 
     size_t newBuffers = 0;

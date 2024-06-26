@@ -4,6 +4,7 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <Buffer.h>
+#include <Source.h>
 #include <string>
 
 #include <memory>
@@ -17,7 +18,7 @@ public:
 
 private:
     void init();
-    void iterateDevices(Device& device);
+    void iterateDevices(std::vector<std::string>& devices);
 
     Device  device;
     Context context{nullptr};

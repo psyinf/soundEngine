@@ -34,6 +34,8 @@ SoundEngine::~SoundEngine()
 
 void SoundEngine::init()
 {
+    std::vector<std::string> devices;
+    iterateDevices(devices);
     device = {alcOpenDevice(nullptr)};
 
     if (!alcCallImpl(alcCreateContext, context, device, device, nullptr) || !context)
@@ -54,19 +56,16 @@ void SoundEngine::init()
     // alcCallImpl(alcIsExtensionPresent(ALCdevice * device, const ALCchar *extName);
 }
 
-void SoundEngine::iterateDevices(Device&)
+void SoundEngine::iterateDevices(std::vector<std::string>& devicesVec)
 {
-    // LATER:
-    /*
-    const ALCchar *devices;
+    const ALCchar* devices;
+    if (!alcCallImpl(alcGetString, devices, device, nullptr, ALC_DEVICE_SPECIFIER)) return;
 
-    if (alcCallImpl(alcGetString, devices, device, nullptr, ALC_ALL_DEVICES_SPECIFIER)) {
+    const char* ptr = devices;
 
-         auto split = std | std::ranges::views::split(' ') | std::ranges::views::transform([](auto &&str) {
-            return std::string_view(&*str.begin(), std::ranges::distance(str));
-        });
-
-        for (auto &&word : split) { std::cout << word << std::endl; }
-    }
-    */
+    do
+    {
+        devicesVec.push_back(std::string(ptr));
+        ptr += devicesVec.back().size() + 1;
+    } while (*(ptr + 1) != '\0');
 }
