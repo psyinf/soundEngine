@@ -39,12 +39,17 @@ void queuedBufferRepeat()
 {
     soundEngineX::SoundEngine engine;
 
-    auto gen = SimpleGenerator(
-        {"data/click.wav", "data/click.wav", "data/click.wav", "data/stop.wav", "data/stop.wav", "data/stop.wav"}, 3);
+    auto gen = SimpleGenerator({"data/demo/click.wav",
+                                "data/demo/click.wav",
+                                "data/demo/click.wav",
+                                "data/demo/stop.wav",
+                                "data/demo/stop.wav",
+                                "data/demo/stop.wav"},
+                               3);
     auto source = soundEngineX::Source();
 
-    std::shared_ptr<soundEngineX::Buffer> buffer =
-        std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::loadMultiple({"data/click.wav", "data/test.wav"}));
+    std::shared_ptr<soundEngineX::Buffer> buffer = std::make_unique<soundEngineX::Buffer>(
+        soundEngineX::loader::loadMultiple({"data/demo/click.wav", "data/demo/test.wav"}));
 
     buffer->setRequestNewDataCallback([&gen](auto size_to_load) { //
         auto files = std::vector<std::string>(std::min(size_to_load, gen.getMakesLeft()));

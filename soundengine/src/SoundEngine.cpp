@@ -27,7 +27,7 @@ SoundEngine::SoundEngine()
 
 SoundEngine::~SoundEngine()
 {
-    spdlog::info("Destroying sound engine");
+    spdlog::debug("Destroying sound engine");
     if (ALCboolean contextMadeCurrent; !alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, device, nullptr))
     { /* what can you do? */
     }
@@ -38,7 +38,7 @@ SoundEngine::~SoundEngine()
     if (ALCboolean closed; !alcCallImpl(alcCloseDevice, closed, device, device))
     { // do we care?
     }
-    spdlog::info("Sound engine destroyed");
+    spdlog::debug("Sound engine destroyed");
 }
 
 void SoundEngine::init()

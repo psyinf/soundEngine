@@ -56,4 +56,10 @@ CPMAddPackage(
     GIT_TAG 1.23.1
 
 )
-
+if (NOT_SUBPROJECT)
+CPMAddPackage(
+    NAME data
+    GITHUB_REPOSITORY psyinf/soundResources
+    GIT_TAG main
+)
+endif()

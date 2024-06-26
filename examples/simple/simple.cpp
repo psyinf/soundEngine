@@ -16,8 +16,8 @@ void simpleSync()
 {
     // play two sounds in a row
     // the source will gain ownership of the buffer
-    soundEngineX::Source(soundEngineX::loader::load("data/click.wav")).play();
-    soundEngineX::Source(soundEngineX::loader::load("data/test.wav")).play();
+    soundEngineX::Source(soundEngineX::loader::load("data/demo/click.wav")).play();
+    soundEngineX::Source(soundEngineX::loader::load("data/demo/test.wav")).play();
     // wait for the sounds to finish
 }
 
@@ -25,8 +25,8 @@ void simpleAsync()
 {
     // play two sounds asynchronously
     // the source will gain ownership of the buffer
-    auto source_a = soundEngineX::Source(soundEngineX::loader::load("data/mixkit-repeating-arcade-beep-1084.wav"));
-    auto source_b = soundEngineX::Source(soundEngineX::loader::load("data/test.wav"));
+    auto source_a = soundEngineX::Source(soundEngineX::loader::load("data/demo/mixkit-repeating-arcade-beep-1084.wav"));
+    auto source_b = soundEngineX::Source(soundEngineX::loader::load("data/demo/test.wav"));
 
     auto future_a = source_a.playAsync();
     auto future_b = source_b.playAsync();
@@ -39,14 +39,14 @@ void simpleAsync()
 void backgroundPlayer()
 {
     soundEngineX::BackgroundPlayer player;
-    player.load("data/click.wav");
-    player.load("data/test.wav");
-    player.load("data/mixkit-repeating-arcade-beep-1084.wav");
+    player.load("data/demo/click.wav");
+    player.load("data/demo/test.wav");
+    player.load("data/demo/mixkit-repeating-arcade-beep-1084.wav");
 
     for (auto i = 0u; i < 1000; ++i)
     {
-        // player.play("data/test.wav");
-        player.play("data/mixkit-repeating-arcade-beep-1084.wav");
+        // player.play("data/demo/test.wav");
+        player.play("data/demo/mixkit-repeating-arcade-beep-1084.wav");
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
         std::cout << "Playing sound " << i << "#running: " << player.getNumRunning() << "\n";
     }

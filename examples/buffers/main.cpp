@@ -17,9 +17,9 @@ void sharedBuffer()
     auto                                  source1 = soundEngineX::Source();
     auto                                  source2 = soundEngineX::Source();
     std::shared_ptr<soundEngineX::Buffer> buffer1 =
-        std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load("data/test.wav"));
+        std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load("data/demo/test.wav"));
     std::shared_ptr<soundEngineX::Buffer> buffer2 =
-        std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load("data/test.wav"));
+        std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load("data/demo/test.wav"));
 
     source1.attachBuffer(buffer1);
     source2.attachBuffer(buffer1);
@@ -42,8 +42,8 @@ void queuedBuffer()
 
     auto source = soundEngineX::Source();
 
-    std::shared_ptr<soundEngineX::Buffer> buffer =
-        std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::loadMultiple({"data/click.wav", "data/test.wav"}));
+    std::shared_ptr<soundEngineX::Buffer> buffer = std::make_unique<soundEngineX::Buffer>(
+        soundEngineX::loader::loadMultiple({"data/demo/click.wav", "data/demo/test.wav"}));
 
     source.attachBuffer(buffer);
 
@@ -86,12 +86,17 @@ struct SimpleGenerator
 void queuedBufferRepeat()
 {
     soundEngineX::SoundEngine engine;
-    auto                      gen = SimpleGenerator(
-        {"data/click.wav", "data/click.wav", "data/click.wav", "data/stop.wav", "data/stop.wav", "data/stop.wav"}, 3);
-    auto source = soundEngineX::Source();
+    auto                      gen = SimpleGenerator({"data/demo/click.wav",
+                                                     "data/demo/click.wav",
+                                                     "data/demo/click.wav",
+                                                     "data/demo/stop.wav",
+                                                     "data/demo/stop.wav",
+                                                     "data/demo/stop.wav"},
+                               3);
+    auto                      source = soundEngineX::Source();
 
-    std::shared_ptr<soundEngineX::Buffer> buffer =
-        std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::loadMultiple({"data/click.wav", "data/test.wav"}));
+    std::shared_ptr<soundEngineX::Buffer> buffer = std::make_unique<soundEngineX::Buffer>(
+        soundEngineX::loader::loadMultiple({"data/demo/click.wav", "data/demo/test.wav"}));
     buffer->setRequestNewDataCallback([&gen](auto size_to_load) { //
         auto files = std::vector<std::string>(std::min(size_to_load, gen.getMakesLeft()));
         std::generate(files.begin(), files.end(), [&gen]() { return gen.make(); });
