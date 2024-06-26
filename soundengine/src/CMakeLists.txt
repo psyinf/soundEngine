@@ -14,16 +14,21 @@ add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} 
     PRIVATE
-        "SoundEngine.h"
         "SoundEngine.cpp"
+        "Source.cpp" 
+        "Loader.cpp" 
+        "LoadWave.cpp"
+        "Buffer.cpp" 
+    PUBLIC
+        "SoundEngine.h"
         "ALHelpers.h" 
         "LoadWave.h" 
-        "Source.h" "Source.cpp" 
-         
+        "Source.h" 
+        "Loader.h" 
         "Types.h" 
-        "Loader.h" "Loader.cpp" "LoadWave.cpp"
-        "Buffer.h" "Buffer.cpp" "ErrorTrace.h")
-
+        "Buffer.h"
+        "ErrorTrace.h"
+)
 target_include_directories(
     ${PROJECT_NAME}
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -34,7 +39,7 @@ target_link_libraries(
     PUBLIC
         OpenAL::OpenAL
         ${ADDITIONAL_LIBS}
-    
+    PRIVATE
         fmt::fmt
         spdlog::spdlog
 )
@@ -52,16 +57,6 @@ install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-config
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-if (NOT NOT_SUBPROJECT)
- set(FMT_INSTALL ON)
-install(
-    EXPORT ${PROJECT_NAME}-config
-    NAMESPACE ${PROJECT_NAME}::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-
-endif()
-
 
 target_code_coverage(${PROJECT_NAME})
 #install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/
