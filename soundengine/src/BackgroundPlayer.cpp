@@ -2,12 +2,17 @@
 #include <spdlog/spdlog.h>
 #include <fmt/format.h>
 #include <Loader.h>
+#include <ranges>
 
 soundEngineX::BackgroundPlayer::~BackgroundPlayer()
 {
     {
         const std::lock_guard<std::mutex> lock(mutex);
-        std::ranges::for_each(sources, [](auto& source) { source.second->stop(); });
+        // std::ranges::for_each(sources, [](auto& source) { source.second->stop(); });
+        for (auto& source : sources)
+        {
+            source.second->stop();
+        };
     }
     // wait for all threads to finish
     auto still_running = numRunning.load();
