@@ -3,6 +3,9 @@ include(GNUInstallDirs)
 add_code_coverage()
 find_package(OpenAL REQUIRED)
 find_package(ALSA)
+find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
+
 if (ALSA_FOUND)
     set(ADDITIONAL_LIBS ALSA::ALSA)
 endif()
@@ -31,6 +34,9 @@ target_link_libraries(
     PUBLIC
         OpenAL::OpenAL
         ${ADDITIONAL_LIBS}
+    
+        fmt::fmt
+        spdlog::spdlog
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES 
@@ -41,15 +47,18 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
     DEBUG_POSTFIX "d"
 )
+add_compile_definitions(${PROJECT_NAME} USE_SPDLOG ON)
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-config
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
+if (NOT NOT_SUBPROJECT)
 install(
     EXPORT ${PROJECT_NAME}-config
     NAMESPACE ${PROJECT_NAME}::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+endif()
 
 target_code_coverage(${PROJECT_NAME})
 #install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/

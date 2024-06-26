@@ -3,6 +3,21 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <iostream>
+#include <fmt/core.h>
+#ifdef USE_SPDLOG
+#include <spdlog/spdlog.h>
+
+// todo conditional include
+#endif // SPD_LOG
+
+inline void reportError(std::string_view s)
+{
+#ifdef USE_SPDLOG
+    spdlog::error(s);
+#else
+    std::cerr << s << "\n";
+#endif // SPD_LOG
+}
 
 inline bool check_alc_errors(ALCdevice* device)
 {
@@ -12,22 +27,23 @@ inline bool check_alc_errors(ALCdevice* device)
         switch (error)
         {
         case ALC_INVALID_VALUE:
-            std::cerr << "ALC_INVALID_VALUE: an invalid value was passed to an OpenAL function";
+            reportError("ALC_INVALID_VALUE: an invalid value was passed to an OpenAL function");
+
             break;
         case ALC_INVALID_DEVICE:
-            std::cerr << "ALC_INVALID_DEVICE: a bad device was passed to an OpenAL function";
+            reportError("ALC_INVALID_DEVICE: a bad device was passed to an OpenAL function");
             break;
         case ALC_INVALID_CONTEXT:
-            std::cerr << "ALC_INVALID_CONTEXT: a bad context was passed to an OpenAL function";
+            reportError("ALC_INVALID_CONTEXT: a bad context was passed to an OpenAL function");
             break;
         case ALC_INVALID_ENUM:
-            std::cerr << "ALC_INVALID_ENUM: an unknown enum value was passed to an OpenAL function";
+            reportError("ALC_INVALID_ENUM: an unknown enum value was passed to an OpenAL function");
             break;
         case ALC_OUT_OF_MEMORY:
-            std::cerr << "ALC_OUT_OF_MEMORY: an unknown enum value was passed to an OpenAL function";
+            reportError("ALC_OUT_OF_MEMORY: an unknown enum value was passed to an OpenAL function");
             break;
         default:
-            std::cerr << "UNKNOWN ALC ERROR: " << error;
+            reportError(fmt::format("UNKNOWN ALC ERROR: {}", error));
         }
         errorTrace::printErrorTrace();
         std::cerr << "\n";
