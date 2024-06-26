@@ -28,7 +28,7 @@ target_sources(${PROJECT_NAME}
         "Types.h" 
         "Buffer.h"
         "ErrorTrace.h"
-)
+ "BackgroundPlayer.h")
 target_include_directories(
     ${PROJECT_NAME}
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

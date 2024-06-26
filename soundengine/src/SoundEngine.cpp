@@ -15,32 +15,38 @@ using namespace soundEngineX;
 
 SoundEngine::SoundEngine()
 {
+    std::vector<std::string> devices;
+    iterateDevices(devices);
+    spdlog::debug("Available devices:");
+    for (const auto& device : devices)
+    {
+        spdlog::debug("Device: {}", device);
+    }
     init();
 }
 
 SoundEngine::~SoundEngine()
 {
-    if (ALCboolean closed; !alcCallImpl(alcCloseDevice, closed, device, device))
-    { // do we care?
-    }
+    spdlog::info("Destroying sound engine");
     if (ALCboolean contextMadeCurrent; !alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, device, nullptr))
     { /* what can you do? */
     }
 
-    if (!alcCallImpl(alcDestroyContext, device, context))
+    if (!alcCallImpl(alcDestroyContext, device, context.context))
     { /* not much you can do */
     }
+    if (ALCboolean closed; !alcCallImpl(alcCloseDevice, closed, device, device))
+    { // do we care?
+    }
+    spdlog::info("Sound engine destroyed");
 }
 
 void SoundEngine::init()
 {
-    std::vector<std::string> devices;
-    iterateDevices(devices);
     device = {alcOpenDevice(nullptr)};
 
     if (!alcCallImpl(alcCreateContext, context, device, device, nullptr) || !context)
     {
-        std::cerr << "ERROR: Could not create audio context" << std::endl;
         /* probably exit program */
         throw std::runtime_error("Could not create audio context");
     }
@@ -48,7 +54,6 @@ void SoundEngine::init()
     ALCboolean contextMadeCurrent = false;
     if (!alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, device, context) || contextMadeCurrent != ALC_TRUE)
     {
-        std::cerr << "ERROR: Could not make audio context current" << std::endl;
         /* probably exit or give up on having sound */
         throw std::runtime_error("Could not make audio context current");
     }
