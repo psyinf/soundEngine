@@ -10,50 +10,25 @@ namespace soundEngineX {
 class BackgroundPlayer
 {
 public:
-    ~BackgroundPlayer()
-    {
-        while (running > 0)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-    }
+    ~BackgroundPlayer();
 
     using SourcePtr = std::shared_ptr<soundEngineX::Source>;
 
-    void load(const std::string& name)
-    {
-        // make sure the the buffer exists
-        getOrLoadBuffer(name);
-    }
+    void load(const std::string& name);
 
-    void play(const std::string& name)
-    {
-        auto buffer = getOrLoadBuffer(name);
-        // play the sound asynchronously and detach the source
-        std::thread([this, &buffer]() mutable {
-            soundEngineX::Source source(buffer);
-            running++;
-            source.play();
-            running--;
-            // TODO hold weak_ptr to source to keep track or stop it
-        }).detach();
-    }
+    uint32_t play(const std::string& name, soundEngineX::SourceConfiguration&& cfg = {});
 
-    auto getNumRunning() const { return running.load(); }
+    void stop(uint32_t sourceId);
 
 private:
-    std::shared_ptr<soundEngineX::Buffer>& getOrLoadBuffer(const std::string& filename)
-    {
-        auto it = buffers.find(filename);
-        if (it == buffers.end())
-        {
-            buffers[filename] = std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load(filename));
-        }
-        return buffers[filename];
-    }
+    void remove(uint32_t sourceId);
 
+    std::shared_ptr<soundEngineX::Buffer>& getOrLoadBuffer(const std::string& filename);
+
+    std::unordered_map<uint32_t, SourcePtr>                                sources;
     std::unordered_map<std::string, std::shared_ptr<soundEngineX::Buffer>> buffers;
-    std::atomic_uint64_t                                                   running{0};
+    std::mutex                                                             mutex;
+    std::atomic<uint32_t>                                                  numRunning;
 };
 
 } // namespace soundEngineX

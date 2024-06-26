@@ -13,6 +13,31 @@ struct SourceConfiguration
     float gain{1.0};
     bool  loop{false};
     bool  stream{false};
+
+    // monadic builder
+    SourceConfiguration& withPitch(float p)
+    {
+        pitch = p;
+        return *this;
+    }
+
+    SourceConfiguration& withGain(float g)
+    {
+        gain = g;
+        return *this;
+    }
+
+    SourceConfiguration& setLoop(bool l)
+    {
+        loop = l;
+        return *this;
+    }
+
+    SourceConfiguration& setStreaming(bool s)
+    {
+        stream = s;
+        return *this;
+    }
 };
 
 /**
@@ -29,10 +54,12 @@ public:
     virtual ~Source();
 
     Source(std::shared_ptr<Buffer>&);
+    Source(std::shared_ptr<Buffer>&, const SourceConfiguration&);
     Source(Buffer&&);
 
     void                       attachBuffer(std::shared_ptr<Buffer> buffer);
     void                       play();
+    void                       stop();
     std::future<void>          playAsync();
     void                       setSourceConfig(const SourceConfiguration& config);
     const SourceConfiguration& getSourceConfiguration() const;

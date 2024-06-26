@@ -23,6 +23,13 @@ Source::Source(Buffer&& buffer)
     attachBuffer(std::make_unique<Buffer>(std::move(buffer)));
 }
 
+Source::Source(std::shared_ptr<Buffer>& buffer, const SourceConfiguration& cfg)
+  : Source()
+{
+    attachBuffer(buffer);
+    setSourceConfig(cfg);
+}
+
 Source::~Source()
 {
     if (_sourceId) { alCallImpl(alDeleteSources, 1, &_sourceId); }
@@ -90,4 +97,9 @@ void Source::attachBuffer(std::shared_ptr<Buffer> buffer)
 std::future<void> Source::playAsync()
 {
     return std::async(std::launch::async, [&]() { play(); });
+}
+
+void Source::stop()
+{
+    alCallImpl(alSourceStop, _sourceId);
 }

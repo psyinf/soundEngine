@@ -19,6 +19,7 @@ target_sources(${PROJECT_NAME}
         "Loader.cpp" 
         "LoadWave.cpp"
         "Buffer.cpp" 
+        "BackgroundPlayer.cpp"
     PUBLIC
         "SoundEngine.h"
         "ALHelpers.h" 
@@ -38,10 +39,10 @@ target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC
         OpenAL::OpenAL
+        spdlog::spdlog
         ${ADDITIONAL_LIBS}
     PRIVATE
         fmt::fmt
-        spdlog::spdlog
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES 
