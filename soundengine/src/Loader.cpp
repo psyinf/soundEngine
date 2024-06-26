@@ -1,5 +1,6 @@
 #include "Loader.h"
-#include "LoadWave.h"
+#include "loaders/LoadWave.h"
+#include "loaders/LoadMp3.h"
 #include <filesystem>
 #include <istream>
 
@@ -8,15 +9,20 @@ namespace soundEngineX::loader {
 DataDescriptor load(std::string_view name)
 {
     auto type = getType(name);
-    return load(std::ifstream(name.data(), std::ios::binary), type);
+    // return load(, type);
+    return load(name, type);
 }
 
-DataDescriptor load(std::istream&& stream, Type type)
+DataDescriptor load(std::string_view name, Type type)
 {
     switch (type)
     {
     case Type::WAV: {
-        auto&& chunk = soundEngineX::format::load_wav(stream);
+        auto&& chunk = soundEngineX::format::load_wav(name);
+        return DataDescriptor{{chunk}};
+    }
+    case Type::MP3: {
+        auto&& chunk = soundEngineX::format::load_mp3(name);
         return DataDescriptor{{chunk}};
     }
     break;
@@ -45,6 +51,7 @@ Type getType(std::string_view name)
         return static_cast<char>(std::tolower(c));
     });
     if (extension == ".wav") { return Type::WAV; }
+    else if (extension == ".mp3") { return Type::MP3; }
     else { throw std::invalid_argument("Cannot determine file type from extension"); }
 }
 

@@ -1,4 +1,5 @@
 #include "LoadWave.h"
+#include <fmt/format.h>
 
 soundEngineX::FormatDescriptor load_wav_file_header(std::istream& file, size_t& size)
 {
@@ -43,10 +44,10 @@ soundEngineX::DataChunk soundEngineX::format::load_wav(std::istream& in)
     return {format, data};
 }
 
-soundEngineX::DataChunk soundEngineX::format::load_wav(const std::string& filename)
+soundEngineX::DataChunk soundEngineX::format::load_wav(std::string_view filename)
 {
-    std::ifstream in(filename, std::ios::binary);
-    if (!in.is_open()) { throw std::runtime_error("Could not open \"" + filename + "\""); }
+    std::ifstream in(filename.data(), std::ios::binary);
+    if (!in.is_open()) { throw std::runtime_error(fmt::format("Could not open {} for reading", filename)); }
 
     return load_wav(in);
 }

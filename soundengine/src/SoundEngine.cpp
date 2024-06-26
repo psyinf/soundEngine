@@ -8,7 +8,7 @@
 #include <string_view>
 
 #include "ALHelpers.h"
-#include "LoadWave.h"
+#include "loaders/LoadWave.h"
 #include <Buffer.h>
 #include <Loader.h>
 using namespace soundEngineX;

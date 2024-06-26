@@ -55,11 +55,45 @@ CPMAddPackage(
     GITHUB_REPOSITORY kcat/openal-soft
     GIT_TAG 1.23.1
 
+    OPTIONS
+    "ALSOFT_UTILS OFF"
+    "ALSOFT_EXAMPLES OFF"
+    "ALSOFT_TESTS OFF"
+    "ALSOFT_INSTALL OFF"
+    "ALSOFT_CONFIG OFF"
+    
+
 )
+
+CPMAddPackage(
+    NAME minimp3
+    GITHUB_REPOSITORY lieff/minimp3
+   
+    GIT_TAG master
+)
+if(minimp3_ADDED)
+add_library(minimp3 INTERFACE)
+target_sources(minimp3 
+    PUBLIC
+    ${minimp3_SOURCE_DIR}/minimp3.h
+    ${minimp3_SOURCE_DIR}/minimp3_ex.h
+
+)
+target_include_directories(minimp3 INTERFACE ${minimp3_SOURCE_DIR})
+add_library(minimp3::minimp3 ALIAS minimp3)
+endif()
+
+CPMAddPackage(
+    NAME scope_lite
+    GITHUB_REPOSITORY martinmoene/scope-lite
+    GIT_TAG v0.2.0
+)
+
+
 if (NOT_SUBPROJECT AND NOT ($ENV{GITHUB_ACTIONS}))
 CPMAddPackage(
     NAME data
-    GITHUB_REPOSITORY psyinf/soundResources
+    GITHUB_REPOSITORY psyinf/resources-sound
     GIT_TAG main
 )
 endif()

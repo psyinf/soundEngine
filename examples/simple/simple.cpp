@@ -16,6 +16,7 @@ void simpleSync()
 {
     // play two sounds in a row
     // the source will gain ownership of the buffer
+    soundEngineX::Source(soundEngineX::loader::load("data/demo/the-stargazer-112474.mp3")).play();
     soundEngineX::Source(soundEngineX::loader::load("data/demo/click.wav")).play();
     soundEngineX::Source(soundEngineX::loader::load("data/demo/test.wav")).play();
     // wait for the sounds to finish
@@ -59,7 +60,8 @@ try
 {
     // initialize a SoundEngine instance
     soundEngineX::SoundEngine engine;
-    // simpleSync();
+
+    simpleSync();
     // simpleAsync();
     backgroundPlayer();
     return 0;

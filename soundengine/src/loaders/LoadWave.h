@@ -14,5 +14,5 @@ namespace soundEngineX::format {
 
 soundEngineX::DataChunk load_wav(std::istream& in);
 
-soundEngineX::DataChunk load_wav(const std::string& filename);
+soundEngineX::DataChunk load_wav(std::string_view filename);
 } // namespace soundEngineX::format
