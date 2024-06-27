@@ -1,6 +1,6 @@
-#include <Source.hpp>
-#include <ALHelpers.hpp>
-#include <Buffer.hpp>
+#include <sndX/Source.hpp>
+#include <sndX/ALHelpers.hpp>
+#include <sndX/Buffer.hpp>
 #include <AL/al.h>
 #include <AL/alc.h>
 

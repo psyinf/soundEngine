@@ -1,7 +1,7 @@
-#include <BackgroundPlayer.hpp>
-#include <Loader.hpp>
-#include <SoundEngine.hpp>
-#include <Source.hpp>
+#include <sndX/BackgroundPlayer.hpp>
+#include <sndX/Loader.hpp>
+#include <sndX/SoundEngine.hpp>
+#include <sndX/Source.hpp>
 
 #include <chrono>
 #include <exception>

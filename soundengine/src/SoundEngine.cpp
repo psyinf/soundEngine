@@ -1,5 +1,5 @@
-#include <SoundEngine.hpp>
-#include <ALHelpers.hpp>
+#include <sndX/SoundEngine.hpp>
+#include <sndX/ALHelpers.hpp>
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <iostream>

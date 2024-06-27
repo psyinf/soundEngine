@@ -1,5 +1,5 @@
-#include <Buffer.hpp>
-#include <ALHelpers.hpp>
+#include <sndX/Buffer.hpp>
+#include <sndX/ALHelpers.hpp>
 #include <span>
 #include <sstream>
 

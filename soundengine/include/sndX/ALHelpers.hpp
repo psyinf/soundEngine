@@ -1,5 +1,5 @@
 #pragma once
-#include <ErrorTrace.hpp>
+#include <sndX/ErrorTrace.hpp>
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <iostream>

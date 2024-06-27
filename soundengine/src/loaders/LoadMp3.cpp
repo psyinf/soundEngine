@@ -1,7 +1,7 @@
 #include "LoadMp3.hpp"
 #define MINIMP3_IMPLEMENTATION
 
-#include <SoundEngine.hpp>
+#include <sndX/SoundEngine.hpp>
 #include <spdlog/spdlog.h>
 #include <nonstd/scope.hpp>
 // disable warnings

@@ -1,6 +1,6 @@
 #pragma once
-#include <Buffer.hpp>
-#include <Source.hpp>
+#include <sndX/Buffer.hpp>
+#include <sndX/Source.hpp>
 #include <atomic>
 #include <memory>
 

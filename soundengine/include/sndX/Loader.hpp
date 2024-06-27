@@ -1,5 +1,5 @@
 #pragma once
-#include <Buffer.hpp>
+#include <sndX/Buffer.hpp>
 #include <vector>
 #include <string>
 

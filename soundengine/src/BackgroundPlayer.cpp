@@ -1,6 +1,6 @@
-#include "BackgroundPlayer.hpp"
+#include <sndX/BackgroundPlayer.hpp>
+#include <sndX/Loader.hpp>
 #include <spdlog/spdlog.h>
-#include <Loader.hpp>
 
 soundEngineX::BackgroundPlayer::~BackgroundPlayer()
 {
