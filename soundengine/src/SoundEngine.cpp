@@ -36,17 +36,22 @@ SoundEngine::SoundEngine()
 
 SoundEngine::~SoundEngine()
 {
+    // all buffers should be unqueued and deleted before deleting the source
+    // alSourcei(sourceID, AL_BUFFER, null);
     spdlog::debug("Destroying sound engine");
     if (ALCboolean contextMadeCurrent; !alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, _device, nullptr))
     { /* what can you do? */
     }
 
-    if (!alcCallImpl(alcDestroyContext, _device, _context.context))
+    if (!alcCallImpl(alcDestroyContext, _device, _context))
     { /* not much you can do */
     }
-    if (ALCboolean closed; !alcCallImpl(alcCloseDevice, closed, _device, _device))
-    { // do we care?
-    }
+    // we cannot use alcCallImpl here,since the device is no longer valid after closing, hence querying the error is not
+    // possible
+    if (!alcCloseDevice(_device)) { spdlog::error("Could not close device"); }
+    //     if (ALCboolean closed; !alcCallImpl(alcCloseDevice, closed, _device, _device))
+    //     { // do we care?
+    //     }
     spdlog::debug("Sound engine destroyed");
 }
 
@@ -82,7 +87,7 @@ std::vector<std::string> SoundEngine::getDevices() const
 std::vector<std::string> SoundEngine::getExtensions() const
 {
     const ALCchar* alcExtension;
-    if (!alcCallImpl(alcGetString, alcExtension, _device.device, nullptr, AL_EXTENSIONS)) return {};
+    if (!alcCallImpl(alcGetString, alcExtension, _device.device, nullptr, ALC_EXTENSIONS)) return {};
     const ALCchar* alExtension;
     if (!alcCallImpl(alGetString, alExtension, _device.device, AL_EXTENSIONS)) return {};
 

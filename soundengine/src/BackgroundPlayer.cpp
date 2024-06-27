@@ -30,16 +30,21 @@ void soundEngineX::BackgroundPlayer::load(const std::string& name)
 
 uint32_t soundEngineX::BackgroundPlayer::play(const std::string& name, soundEngineX::SourceConfiguration&& cfg)
 {
+    // TODO: starting the thread is taking almost 1m, so maybe we use a thread pool or some async mechanism
+    auto init = std::chrono::high_resolution_clock::now();
     auto buffer = getOrLoadBuffer(name);
-    // play the sound asynchronously and detach the source
+
     std::shared_ptr<soundEngineX::Source> source = std::make_shared<soundEngineX::Source>(buffer, cfg);
     {
         std::lock_guard<std::mutex> lock(mutex);
         sources[source->getSourceId()] = source;
     }
-    // BUG: if the thread outlives the player, the remove will access a dangling pointer
-    std::thread([this, source]() mutable {
+    std::thread([this, source, init]() mutable {
         numRunning++;
+        spdlog::info(
+            "register: {}",
+            std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - init)
+                .count());
         source->play();
 
         remove(source->getSourceId());

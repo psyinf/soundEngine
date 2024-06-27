@@ -6,6 +6,18 @@
 
 namespace soundEngineX {
 
+class BackgroundPlayerInterface
+{
+public:
+    virtual ~BackgroundPlayerInterface() = default;
+
+    virtual void load(const std::string& name) = 0;
+
+    virtual uint32_t play(const std::string& name, soundEngineX::SourceConfiguration&& cfg = {}) = 0;
+
+    virtual void stop(uint32_t sourceId) = 0;
+};
+
 // naive background player
 class BackgroundPlayer
 {
