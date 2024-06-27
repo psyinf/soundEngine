@@ -1,4 +1,4 @@
-#include <loaders/LoadWave.hpp>
+#include "LoadWave.hpp"
 #include <Buffer.hpp>
 #include <fmt/format.h>
 

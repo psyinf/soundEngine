@@ -1,6 +1,6 @@
 #include <Loader.hpp>
-#include <loaders/LoadWave.hpp>
-#include <loaders/LoadMp3.hpp>
+#include "loaders/LoadWave.hpp"
+#include "loaders/LoadMp3.hpp"
 #include <filesystem>
 
 namespace soundEngineX::loader {

@@ -1,4 +1,4 @@
-#include <loaders/LoadMp3.hpp>
+#include "LoadMp3.hpp"
 #define MINIMP3_IMPLEMENTATION
 
 #include <SoundEngine.hpp>
