@@ -1,8 +1,6 @@
-#include "BackgroundPlayer.h"
+#include "BackgroundPlayer.hpp"
 #include <spdlog/spdlog.h>
-#include <fmt/format.h>
-#include <Loader.h>
-#include <ranges>
+#include <Loader.hpp>
 
 soundEngineX::BackgroundPlayer::~BackgroundPlayer()
 {

@@ -1,6 +1,6 @@
 #pragma once
-#include <Buffer.h>
-#include <Source.h>
+#include <Buffer.hpp>
+#include <Source.hpp>
 #include <atomic>
 #include <memory>
 

@@ -1,22 +1,16 @@
-#include "Loader.h"
-#include <SoundEngine.h>
-#include <Source.h>
+#include <Loader.hpp>
+#include <SoundEngine.hpp>
+#include <Source.hpp>
+#include <BackgroundPlayer.hpp>
 #include <chrono>
-#include <coroutine>
 #include <exception>
-#include <fstream>
-#include <future>
 #include <iostream>
-#include <ranges>
 #include <thread>
-#include <BackgroundPlayer.h>
 
 void simpleSync()
-
 {
     // play two sounds in a row
     // the source will gain ownership of the buffer
-    soundEngineX::Source(soundEngineX::loader::load("data/demo/the-stargazer-112474.mp3")).play();
     soundEngineX::Source(soundEngineX::loader::load("data/demo/click.wav")).play();
     soundEngineX::Source(soundEngineX::loader::load("data/demo/test.wav")).play();
     // wait for the sounds to finish
@@ -60,6 +54,7 @@ try
 {
     // initialize a SoundEngine instance
     soundEngineX::SoundEngine engine;
+    engine.getExtensions();
 
     simpleSync();
     // simpleAsync();

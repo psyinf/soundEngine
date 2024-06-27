@@ -1,4 +1,5 @@
-#include "LoadWave.h"
+#include <loaders/LoadWave.hpp>
+#include <Buffer.hpp>
 #include <fmt/format.h>
 
 soundEngineX::FormatDescriptor load_wav_file_header(std::istream& file, size_t& size)

@@ -24,16 +24,18 @@ target_sources(${PROJECT_NAME}
         "BackgroundPlayer.cpp"
         "loaders/LoadMp3.cpp"
     PUBLIC
-        "SoundEngine.h"
-        "ALHelpers.h" 
-        "loaders/LoadWave.h" 
-        "Source.h" 
-        "Loader.h" 
-        "Types.h" 
-        "Buffer.h"
-        "ErrorTrace.h"
-        "BackgroundPlayer.h" 
-        "loaders/LoadMp3.h")
+        "SoundEngine.hpp"
+        "ALHelpers.hpp" 
+        "Source.hpp" 
+        "Loader.hpp" 
+        "Types.hpp" 
+        "Buffer.hpp"
+        "ErrorTrace.hpp"
+        "BackgroundPlayer.hpp" 
+        "loaders/LoadMp3.hpp"
+        "loaders/LoadWave.hpp" 
+
+)
 target_include_directories(
     ${PROJECT_NAME}
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

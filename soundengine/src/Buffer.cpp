@@ -1,5 +1,5 @@
-#include "Buffer.h"
-#include "ALHelpers.h"
+#include <Buffer.hpp>
+#include <ALHelpers.hpp>
 #include <span>
 #include <sstream>
 
@@ -48,7 +48,7 @@ soundEngineX::Buffer::Buffer(const DataDescriptor& data)
                    buffers[i],
                    determineFormatType(data.chunks[i].format),
                    data.chunks[i].data.data(),
-                   data.chunks[i].data.size(),
+                   static_cast<ALsizei>(data.chunks[i].data.size()),
                    data.chunks[i].format.sampleRateHz);
     }
 }
@@ -73,12 +73,12 @@ soundEngineX::Buffer::Buffer(size_t num_chunks)
   : buffers(num_chunks)
 {
     if (num_chunks == 0) { throw std::invalid_argument("Number of chunks must be greater than 0"); }
-    alCallImpl(alGenBuffers, buffers.size(), buffers.data());
+    alCallImpl(alGenBuffers, static_cast<ALsizei>(buffers.size()), buffers.data());
 }
 
 soundEngineX::Buffer::~Buffer()
 {
-    alCallImpl(alDeleteBuffers, buffers.size(), buffers.data());
+    alCallImpl(alDeleteBuffers, static_cast<ALsizei>(buffers.size()), buffers.data());
 }
 
 std::vector<ALuint> soundEngineX::Buffer::buffersUnqueued(const std::vector<ALuint>& unqueuedBuffers)
@@ -108,7 +108,7 @@ void soundEngineX::Buffer::setBufferData(const auto& chunk, ALuint targetBuffer)
                targetBuffer,
                determineFormatType(chunk.format),
                chunk.data.data(),
-               chunk.data.size(),
+               static_cast<ALsizei>(chunk.data.size()),
                chunk.format.sampleRateHz);
 }
 

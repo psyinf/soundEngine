@@ -1,7 +1,7 @@
 #pragma once
-#include "Buffer.h"
-#include <istream>
+#include <Buffer.hpp>
 #include <vector>
+#include <string>
 
 namespace soundEngineX::loader {
 

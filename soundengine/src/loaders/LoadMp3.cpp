@@ -1,13 +1,13 @@
-#include "LoadMp3.h"
+#include <loaders/LoadMp3.hpp>
 #define MINIMP3_IMPLEMENTATION
-// disable all warnings
 
-// enable all warnings
-#include <fstream>
-#include <SoundEngine.h>
+#include <SoundEngine.hpp>
 #include <spdlog/spdlog.h>
 #include <nonstd/scope.hpp>
+// disable warnings
+#pragma warning(push, 0)
 #include "minimp3_ex.h"
+#pragma warning(pop)
 
 template <typename mp3decFunc, typename... Params>
 inline void mp3CallImpl(mp3decFunc function, Params&&... params)
@@ -39,7 +39,7 @@ inline void mp3CallImpl(mp3decFunc function, Params&&... params)
     }
 }
 
-soundEngineX::DataChunk soundEngineX::format::load_mp3(std::istream& in)
+soundEngineX::DataChunk soundEngineX::format::load_mp3(std::istream& /*in*/)
 {
     throw std::runtime_error("Not yet implemented");
 }

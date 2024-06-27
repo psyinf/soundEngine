@@ -6,7 +6,8 @@
 #include <string>
 
 #include <vector>
-#include <SoundEngine.h>
+#include <SoundEngine.hpp>
+#include <Buffer.hpp>
 
 #include <cstring>
 
