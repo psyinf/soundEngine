@@ -24,12 +24,13 @@ if (NOT_SUBPROJECT)
   add_subdirectory(examples)
 endif()
 
-install(DIRECTORY
-		data
-	DESTINATION
-		bin
-	COMPONENT
-		${RUNTIME_COMPONENT}
-)
+#disabled for now
+#install(DIRECTORY
+#		data
+#	DESTINATION
+#		bin
+#	COMPONENT
+#		${RUNTIME_COMPONENT}
+#)
 
 
