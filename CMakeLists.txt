@@ -25,13 +25,4 @@ if (NOT_SUBPROJECT)
   add_subdirectory(test)
 endif()
 
-#disabled for now
-#install(DIRECTORY
-#		data
-#	DESTINATION
-#		bin
-#	COMPONENT
-#		${RUNTIME_COMPONENT}
-#)
-
 
