@@ -93,6 +93,11 @@ std::vector<std::string> SoundEngine::getExtensions() const
 
     auto alc_exts = alStringToVector(alcExtension, ' ');
     auto al_exts = alStringToVector(alExtension, ' ');
-    alc_exts.append_range(al_exts);
+    // TODO:not yet implemented in gcc 14.1
+    // alc_exts.append_range(al_exts);
+    for (const auto& ext : al_exts)
+    {
+        alc_exts.push_back(ext);
+    }
     return alc_exts;
 }

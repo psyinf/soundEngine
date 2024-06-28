@@ -1,8 +1,8 @@
-#include <sndX/BackgroundPlayer.hpp>
+#include <sndX/BackgroundPlayerThreaded.hpp>
 #include <sndX/Loader.hpp>
 #include <spdlog/spdlog.h>
 
-soundEngineX::BackgroundPlayer::~BackgroundPlayer()
+soundEngineX::BackgroundPlayerThreaded::~BackgroundPlayerThreaded()
 {
     {
         const std::lock_guard<std::mutex> lock(mutex);
@@ -22,13 +22,13 @@ soundEngineX::BackgroundPlayer::~BackgroundPlayer()
     }
 }
 
-void soundEngineX::BackgroundPlayer::load(const std::string& name)
+void soundEngineX::BackgroundPlayerThreaded::load(const std::string& name)
 {
     // make sure the the buffer exists
     getOrLoadBuffer(name);
 }
 
-uint32_t soundEngineX::BackgroundPlayer::play(const std::string& name, soundEngineX::SourceConfiguration&& cfg)
+uint32_t soundEngineX::BackgroundPlayerThreaded::play(const std::string& name, soundEngineX::SourceConfiguration&& cfg)
 {
     // TODO: starting the thread is taking almost 1m, so maybe we use a thread pool or some async mechanism
     auto init = std::chrono::high_resolution_clock::now();
@@ -53,7 +53,7 @@ uint32_t soundEngineX::BackgroundPlayer::play(const std::string& name, soundEngi
     return source->getSourceId();
 }
 
-void soundEngineX::BackgroundPlayer::stop(uint32_t sourceId)
+void soundEngineX::BackgroundPlayerThreaded::stop(uint32_t sourceId)
 {
     const std::lock_guard<std::mutex> lock(mutex);
     auto                              it = sources.find(sourceId);
@@ -64,14 +64,15 @@ void soundEngineX::BackgroundPlayer::stop(uint32_t sourceId)
     }
 }
 
-void soundEngineX::BackgroundPlayer::remove(uint32_t sourceId)
+void soundEngineX::BackgroundPlayerThreaded::remove(uint32_t sourceId)
 {
     const std::lock_guard<std::mutex> lock(mutex);
     auto                              it = sources.find(sourceId);
     if (it != sources.end()) { sources.erase(it); }
 }
 
-std::shared_ptr<soundEngineX::Buffer>& soundEngineX::BackgroundPlayer::getOrLoadBuffer(const std::string& filename)
+std::shared_ptr<soundEngineX::Buffer>& soundEngineX::BackgroundPlayerInterface::getOrLoadBuffer(
+    const std::string& filename)
 {
     auto it = buffers.find(filename);
     if (it == buffers.end())

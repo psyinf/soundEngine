@@ -21,16 +21,20 @@ target_sources(${PROJECT_NAME}
         "src/Loader.cpp" 
         "src/loaders/LoadWave.cpp"
         "src/Buffer.cpp" 
-        "src/BackgroundPlayer.cpp"
+        "src/BackgroundPlayerThreaded.cpp"
         "src/loaders/LoadMp3.cpp"
     PUBLIC
         "include/sndX/SoundEngine.hpp"
         "include/sndX/ALHelpers.hpp" 
+        
         "include/sndX/Source.hpp" 
         "include/sndX/Loader.hpp" 
         "include/sndX/Types.hpp" 
         "include/sndX/Buffer.hpp"
         "include/sndX/ErrorTrace.hpp"
+        "include/sndX/BackgroundPlayerInterface.hpp"
+        "include/sndX/BackgroundPlayerThreaded.hpp"
+
         "include/sndX/BackgroundPlayer.hpp"
     
     PRIVATE        
