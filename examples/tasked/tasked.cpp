@@ -187,16 +187,9 @@ void taskedPlayerSoundTest()
 
     player.addTask([&src2]() { src2->start(); });
     player.addTask([&src1]() { src1->start(); });
-
-    // player.addTask({[]() { soundEngineX::Source(soundEngineX::loader::load("data/demo/test.wav")).play(); }});
-    //  wait for the sounds to finish
-    // TODO:
-    std::this_thread::sleep_for(std::chrono::seconds(20));
-    //     // play two sounds in a row
-    //     // the source will gain ownership of the buffer
-    //     soundEngineX::Source(soundEngineX::loader::load("data/demo/click.wav")).play();
-    //     soundEngineX::Source(soundEngineX::loader::load("data/demo/test.wav")).play();
-    //     // wait for the sounds to finish
+    player.addTask([]() { std::this_thread::sleep_for(std::chrono::seconds(3)); });
+    player.wait();
+    player.stop();
 }
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
@@ -204,7 +197,7 @@ try
 {
     // initialize a SoundEngine instance
     soundEngineX::SoundEngine engine;
-    taskedPlayerTest();
+    taskedPlayerSoundTest();
     return 0;
 }
 catch (const std::exception& e)
