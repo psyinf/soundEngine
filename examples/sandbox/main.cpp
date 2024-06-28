@@ -1,13 +1,10 @@
-#include "Loader.h"
-#include <SoundEngine.h>
-#include <Source.h>
+#include <sndX/Loader.hpp>
+#include <sndX/SoundEngine.hpp>
+#include <sndX/Source.hpp>
 #include <chrono>
-#include <coroutine>
 #include <exception>
-#include <fstream>
 #include <future>
 #include <iostream>
-#include <ranges>
 #include <thread>
 
 struct SimpleGenerator

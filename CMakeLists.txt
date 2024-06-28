@@ -22,15 +22,7 @@ include(cmake/deps_cpm.cmake)
 add_subdirectory(soundengine)
 if (NOT_SUBPROJECT)
   add_subdirectory(examples)
+  add_subdirectory(test)
 endif()
-
-#disabled for now
-#install(DIRECTORY
-#		data
-#	DESTINATION
-#		bin
-#	COMPONENT
-#		${RUNTIME_COMPONENT}
-#)
 
 

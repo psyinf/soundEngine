@@ -1,5 +1,5 @@
 #pragma once
-#include "ErrorTrace.h"
+#include <sndX/ErrorTrace.hpp>
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <iostream>
@@ -85,6 +85,9 @@ inline bool check_al_errors()
     }
     return true;
 }
+
+// forwarding templates. First parameter is the function, second is always the device. The variations are due to
+// functions with and without return values
 
 template <typename alcFunction, typename... Params>
 inline auto alcCallImpl(alcFunction function, ALCdevice* device, Params&&... params) ->

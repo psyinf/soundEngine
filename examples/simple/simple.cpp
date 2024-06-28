@@ -1,22 +1,17 @@
-#include "Loader.h"
-#include <SoundEngine.h>
-#include <Source.h>
+#include <sndX/BackgroundPlayer.hpp>
+#include <sndX/Loader.hpp>
+#include <sndX/SoundEngine.hpp>
+#include <sndX/Source.hpp>
+
 #include <chrono>
-#include <coroutine>
 #include <exception>
-#include <fstream>
-#include <future>
 #include <iostream>
-#include <ranges>
 #include <thread>
-#include <BackgroundPlayer.h>
 
 void simpleSync()
-
 {
     // play two sounds in a row
     // the source will gain ownership of the buffer
-    soundEngineX::Source(soundEngineX::loader::load("data/demo/the-stargazer-112474.mp3")).play();
     soundEngineX::Source(soundEngineX::loader::load("data/demo/click.wav")).play();
     soundEngineX::Source(soundEngineX::loader::load("data/demo/test.wav")).play();
     // wait for the sounds to finish
@@ -44,13 +39,14 @@ void backgroundPlayer()
     player.load("data/demo/test.wav");
     player.load("data/demo/mixkit-repeating-arcade-beep-1084.wav");
 
-    for (auto i = 0u; i < 100; ++i)
+    for (auto i = 0u; i < 3; ++i)
     {
-        // play a sound every 100ms
+        // play a sound every 1000ms
         auto handle = player.play("data/demo/mixkit-repeating-arcade-beep-1084.wav", {.gain = 0.05f});
         if (i % 10 == 0) { player.play("data/demo/test.wav"); }
-        std::this_thread::sleep_for(std::chrono::milliseconds(110));
-        // player.stop(handle);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        // stop the sound
+        player.stop(handle);
     }
     // todo wait properly
 }
@@ -60,6 +56,7 @@ try
 {
     // initialize a SoundEngine instance
     soundEngineX::SoundEngine engine;
+    engine.getExtensions();
 
     simpleSync();
     // simpleAsync();

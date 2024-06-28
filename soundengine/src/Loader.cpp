@@ -1,8 +1,7 @@
-#include "Loader.h"
-#include "loaders/LoadWave.h"
-#include "loaders/LoadMp3.h"
+#include <sndX/Loader.hpp>
+#include "loaders/LoadWave.hpp"
+#include "loaders/LoadMp3.hpp"
 #include <filesystem>
-#include <istream>
 
 namespace soundEngineX::loader {
 

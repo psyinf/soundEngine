@@ -3,10 +3,8 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
-#include <string>
 
-#include <vector>
-#include <SoundEngine.h>
+#include <sndX/Buffer.hpp>
 
 #include <cstring>
 
