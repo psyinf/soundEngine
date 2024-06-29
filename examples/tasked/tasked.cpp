@@ -1,4 +1,5 @@
-#include <sndX/BackgroundPlayer.hpp>
+#include <sndX/TaskEngine.hpp>
+#include <sndX/BackgroundPlayerInterface.hpp>
 #include <sndX/Loader.hpp>
 #include <sndX/SoundEngine.hpp>
 #include <sndX/Source.hpp>
@@ -7,144 +8,54 @@
 #include <exception>
 #include <iostream>
 #include <thread>
-#include <queue>
-#include <map>
 
-// a task to be executed by the tasked player, should be non-blocking and as fast as possible
-struct Task
-{
-    using Duration = std::chrono::high_resolution_clock::duration;
-    using TimePoint = std::chrono::high_resolution_clock::time_point;
-
-    std::function<bool()> task; // the task needs to return true if it was successful, false otherwise.
-    bool                  reschedule_on_failure = false; // if the task fails, should it be rescheduled?
-    TimePoint             starting_time{};               // delay before executing the task
-    Duration              reschedule_delay = std::chrono::milliseconds(0); // delay before executing the task
-};
-
-class TaskedPlayer
+class BackgroundPlayerTasked : public soundEngineX::BackgroundPlayerInterface
 {
 public:
-    TaskedPlayer()
+    BackgroundPlayerTasked()
+      : soundEngineX::BackgroundPlayerInterface()
+      , taskEngine()
     {
-        std::jthread t(&TaskedPlayer::run, this);
-        t.detach();
-        // regularly check for timed tasks
-        std::jthread t2([this] {
-            while (_running)
-            {
-                checkTimedTasks();
-                std::this_thread::sleep_for(std::chrono::milliseconds(16));
-            }
-        });
-        t2.detach();
     }
 
-    ~TaskedPlayer() {}
+    void load(const std::string& name) override { getOrLoadBuffer(name); }
 
-    template <typename F>
-    void addTask(F&& f)
+    uint32_t play(const std::string& name, soundEngineX::SourceConfiguration&& cfg = {}) override
     {
-        // if lambda's return type is void, we wrap it in a lambda that returns bool for convenience
-        constexpr bool is_void = std::is_same_v<decltype(f()), void>;
-        if constexpr (is_void)
-        {
-            addTask({[f]() {
-                f();
-                return true;
-            }});
-        }
-        // is convertible to bool
-        else if constexpr (std::is_convertible_v<decltype(f()), bool>)
-        {
-            addTask({[f]() { return f(); }});
-        }
-        else { static_assert(is_void, "Task must return bool or void"); }
+        using namespace std::chrono_literals;
+        auto source = std::make_shared<soundEngineX::Source>(getOrLoadBuffer(name), std::move(cfg));
+        taskEngine.addTask([source]() { source->start(); });
+        // add cyclic task to check if source is still playing
+        // TODO: .starting_time_offset should be a around the estimated time to play the sound
+
+        taskEngine.addTask({.task =
+                                [source]() {
+                                    std::cout << "Checking if source " << source->getSourceId() << " is playing\n ";
+                                    return !source->isPlaying();
+                                },
+                            .reschedule_on_failure = true,
+                            .starting_time_offset = 1000ms,
+                            .reschedule_delay = 1500ms});
+        return source->getSourceId();
     }
 
-    void addTask(Task&& task)
-    {
-        auto            now = std::chrono::high_resolution_clock::now();
-        std::lock_guard lk(mutex);
-        if (task.starting_time < now)
-        {
-            _tasks.emplace_back(std::move(task));
-            _task_available = true;
-            cv.notify_one();
-        }
-        else { _timed_tasks[task.starting_time] = std::move(task); }
-    }
-
-    void checkTimedTasks()
-    {
-        auto now = std::chrono::high_resolution_clock::now();
-        // get all delayed task with deadline passed
-        const std::lock_guard lk(mutex);
-        auto                  iter = _timed_tasks.lower_bound(now);
-        // emplace all tasks from the map to the queue
-        for (auto it = _timed_tasks.begin(); it != iter; it++)
-        {
-            _tasks.emplace_back(std::move(it->second));
-        }
-
-        _timed_tasks.erase(_timed_tasks.begin(), iter);
-        _task_available = true;
-        cv.notify_one();
-    }
-
-    void wait()
-    {
-        std::unique_lock lk(mutex);
-        cv.wait(lk, [this] { return _tasks.empty() && _timed_tasks.empty(); });
-    }
-
-    void stop()
-    {
-        _running = false;
-        std::lock_guard lk(mutex);
-        _tasks.clear();
-        _timed_tasks.clear();
-        _task_available = false;
-    }
+    void stop(uint32_t sourceId) override { throw std::logic_error("The method or operation is not implemented."); }
 
 private:
-    void run()
-    {
-        while (_running)
-        {
-            std::unique_lock lk(mutex);
-            cv.wait(lk, [this] { return _task_available; });
-
-            while (!_tasks.empty())
-            {
-                auto task = std::move(_tasks.front());
-                _tasks.pop_front();
-                auto success = task.task();
-                if (!success && task.reschedule_on_failure)
-                {
-                    _timed_tasks[std::chrono::high_resolution_clock::now() + task.reschedule_delay] = std::move(task);
-                }
-
-                _task_available = false;
-            }
-
-            lk.unlock();
-            cv.notify_one();
-        }
-    }
-
-    std::mutex mutex;
-    // condition variable to signal the player that a new task has been added
-    std::condition_variable         cv;
-    bool                            _task_available = false;
-    std::atomic_bool                _running = true;
-    std::deque<Task>                _tasks;
-    std::map<Task::TimePoint, Task> _timed_tasks;
+    soundEngineX::TaskEngine taskEngine;
 };
 
 void taskedPlayerTest()
 {
-    TaskedPlayer player;
+    BackgroundPlayerTasked player;
+    player.play("data/demo/click.wav");
+    player.play("data/demo/test.wav");
+    player.play("data/demo/mixkit-repeating-arcade-beep-1084.wav");
+}
+
+void taskedEngineTest()
+{
+    soundEngineX::TaskEngine player;
     using namespace std::chrono_literals;
     auto now = std::chrono::high_resolution_clock::now();
     int  state = 0;
@@ -165,7 +76,7 @@ void taskedPlayerTest()
                             return state > 3;
                         },
                     .reschedule_on_failure = true,
-                    .starting_time = now + 2s,
+                    .starting_time_offset = 2s,
                     .reschedule_delay = 1s}
 
     );
@@ -175,15 +86,15 @@ void taskedPlayerTest()
 
 void taskedPlayerSoundTest()
 {
-    TaskedPlayer player;
-    auto         src1 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/click.wav"));
-    auto         src2 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/test.wav"));
+    soundEngineX::TaskEngine player;
+    auto src1 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/click.wav"));
+    auto src2 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/test.wav"));
 
-    player.addTask({[&src1]() {
+    player.addTask(soundEngineX::Task{.task = [&src1]() {
         src1->start();
         return "";
     }});
-    player.addTask([]() { std::this_thread::sleep_for(std::chrono::seconds(3)); });
+    // player.addTask([]() { std::this_thread::sleep_for(std::chrono::seconds(3)); });
 
     player.addTask([&src2]() { src2->start(); });
     player.addTask([&src1]() { src1->start(); });
@@ -195,9 +106,10 @@ void taskedPlayerSoundTest()
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 try
 {
+    soundEngineX::SoundEngine soundEngine;
     // initialize a SoundEngine instance
-    soundEngineX::SoundEngine engine;
-    taskedPlayerSoundTest();
+    taskedPlayerTest();
+    // taskedPlayerSoundTest();
     return 0;
 }
 catch (const std::exception& e)

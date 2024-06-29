@@ -22,7 +22,9 @@ target_sources(${PROJECT_NAME}
         "src/loaders/LoadWave.cpp"
         "src/Buffer.cpp" 
         "src/BackgroundPlayerThreaded.cpp"
+        "src/TaskBasedPlayer.cpp"
         "src/loaders/LoadMp3.cpp"
+
     PUBLIC
         "include/sndX/SoundEngine.hpp"
         "include/sndX/ALHelpers.hpp" 
@@ -34,13 +36,11 @@ target_sources(${PROJECT_NAME}
         "include/sndX/ErrorTrace.hpp"
         "include/sndX/BackgroundPlayerInterface.hpp"
         "include/sndX/BackgroundPlayerThreaded.hpp"
-
         "include/sndX/BackgroundPlayer.hpp"
     
     PRIVATE        
         "src/loaders/LoadMp3.hpp"
         "src/loaders/LoadWave.hpp" 
-
 )
 target_include_directories(
     ${PROJECT_NAME}
