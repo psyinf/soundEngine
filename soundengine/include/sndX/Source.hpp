@@ -57,20 +57,30 @@ public:
     Source(std::shared_ptr<Buffer>&, const SourceConfiguration&);
     Source(Buffer&&);
 
-    void                       attachBuffer(std::shared_ptr<Buffer> buffer);
-    void                       play();
-    void                       stop();
-    std::future<void>          playAsync();
+    void attachBuffer(std::shared_ptr<Buffer> buffer);
+    void play(); // blocking play
+
+    void start();
+    void start(const SourceConfiguration&);
+    void stop();
+    void pause();
+    bool isPlaying() const;
+    bool isStopped() const;
+
     void                       setSourceConfig(const SourceConfiguration& config);
     const SourceConfiguration& getSourceConfiguration() const;
+    void                       applyConfiguration(const SourceConfiguration&);
 
     uint32_t getSourceId() const { return _sourceId; };
 
     explicit operator ALuint() const { return _sourceId; };
 
-    void applyConfiguration();
+    std::chrono::high_resolution_clock::duration getDurationEstimation() const;
+    ;
 
 private:
+    void fillStreamBuffers();
+
     std::shared_ptr<Buffer> _attachedBuffer;
     ALuint                  _sourceId{};
     SourceConfiguration     _config;

@@ -1,5 +1,6 @@
 #pragma once
 #include <sndX/Buffer.hpp>
+#include <iostream>
 
 namespace soundEngineX::format {
 

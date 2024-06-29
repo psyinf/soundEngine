@@ -5,13 +5,13 @@
 #include <memory>
 
 #include <sndX/BackgroundPlayerInterface.hpp>
-#include <sndX/BackgroundPlayerExp.hpp>
+#include <sndX/BackgroundPlayerTasked.hpp>
 #include <sndX/BackgroundPlayerThreaded.hpp>
 
 namespace soundEngineX {
-#ifdef EXPERIMENTAL_PLAYER
-using BackgroundPlayer = BackgroundPlayerExp;
-#else
+#ifdef FALLBACK_PLAYER
 using BackgroundPlayer = BackgroundPlayerThreaded;
+#else
+using BackgroundPlayer = BackgroundPlayerTasked;
 #endif
 } // namespace soundEngineX

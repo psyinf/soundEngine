@@ -20,12 +20,24 @@ void simpleSync()
 void simpleAsync()
 {
     // play two sounds asynchronously
-    // the source will gain ownership of the buffer
     auto source_a = soundEngineX::Source(soundEngineX::loader::load("data/demo/mixkit-repeating-arcade-beep-1084.wav"));
     auto source_b = soundEngineX::Source(soundEngineX::loader::load("data/demo/test.wav"));
 
-    auto future_a = source_a.playAsync();
-    auto future_b = source_b.playAsync();
+    source_a.start({});
+    source_b.start({});
+
+    auto future_a = std::async(std::launch::async, [&source_a]() {
+        while (source_a.isPlaying())
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(16));
+        };
+    });
+    auto future_b = std::async(std::launch::async, [&source_b]() {
+        while (source_b.isPlaying())
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(16));
+        };
+    });
 
     // wait for all futures to finish
     future_a.get();

@@ -37,25 +37,14 @@ Source::~Source()
 
 void Source::play()
 {
-    applyConfiguration();
+    applyConfiguration(_config);
 
     alCallImpl(alSourcePlay, _sourceId);
     if (_config.stream)
     {
-        for (ALint state = AL_PLAYING; state == AL_PLAYING;)
+        while (isPlaying())
         {
-            ALint buffersProcessed = 0;
-            alCallImpl(alGetSourcei, _sourceId, AL_SOURCE_STATE, &state);
-            alCallImpl(alGetSourcei, _sourceId, AL_BUFFERS_PROCESSED, &buffersProcessed);
-            if (0 == buffersProcessed) { continue; }
-            std::vector<ALuint> buffers(buffersProcessed);
-            alCallImpl(alSourceUnqueueBuffers, _sourceId, buffersProcessed, buffers.data());
-            auto newBuffers = _attachedBuffer->buffersUnqueued(buffers);
-            if (!newBuffers.empty())
-            {
-                alCallImpl(alSourceQueueBuffers, _sourceId, static_cast<ALsizei>(newBuffers.size()), newBuffers.data());
-                alCallImpl(alSourcePlay, _sourceId);
-            }
+            fillStreamBuffers();
         }
     }
     else
@@ -63,6 +52,8 @@ void Source::play()
         ALint state = AL_PLAYING;
         while (state == AL_PLAYING)
         {
+            // release some time to the CPU
+            std::this_thread::sleep_for(std::chrono::milliseconds(16));
             alCallImpl(alGetSourcei, _sourceId, AL_SOURCE_STATE, &state);
         }
     }
@@ -78,11 +69,11 @@ const SourceConfiguration& Source::getSourceConfiguration() const
     return _config;
 }
 
-void Source::applyConfiguration()
+void Source::applyConfiguration(const SourceConfiguration& config)
 {
-    alCallImpl(alSourcef, _sourceId, AL_PITCH, _config.pitch);
-    alCallImpl(alSourcef, _sourceId, AL_GAIN, _config.gain);
-    alCallImpl(alSourcei, _sourceId, AL_LOOPING, _config.loop);
+    alCallImpl(alSourcef, _sourceId, AL_PITCH, config.pitch);
+    alCallImpl(alSourcef, _sourceId, AL_GAIN, config.gain);
+    alCallImpl(alSourcei, _sourceId, AL_LOOPING, config.loop);
 }
 
 void Source::attachBuffer(std::shared_ptr<Buffer> buffer)
@@ -94,12 +85,57 @@ void Source::attachBuffer(std::shared_ptr<Buffer> buffer)
                buffer->getHandles().data());
 }
 
-std::future<void> Source::playAsync()
-{
-    return std::async(std::launch::async, [&]() { play(); });
-}
-
 void Source::stop()
 {
     alCallImpl(alSourceStop, _sourceId);
+}
+
+void Source::start(const SourceConfiguration& config)
+{
+    applyConfiguration(config);
+    alCallImpl(alSourcePlay, _sourceId);
+}
+
+void Source::start()
+{
+    start(_config);
+}
+
+void Source::pause()
+{
+    alCallImpl(alSourcePause, _sourceId);
+}
+
+void Source::fillStreamBuffers()
+{
+    ALint buffersProcessed = 0;
+    alCallImpl(alGetSourcei, _sourceId, AL_BUFFERS_PROCESSED, &buffersProcessed);
+    if (0 == buffersProcessed) { return; }
+    std::vector<ALuint> buffers(buffersProcessed);
+    alCallImpl(alSourceUnqueueBuffers, _sourceId, buffersProcessed, buffers.data());
+    auto newBuffers = _attachedBuffer->buffersUnqueued(buffers);
+    if (!newBuffers.empty())
+    {
+        alCallImpl(alSourceQueueBuffers, _sourceId, static_cast<ALsizei>(newBuffers.size()), newBuffers.data());
+        alCallImpl(alSourcePlay, _sourceId);
+    }
+}
+
+bool Source::isPlaying() const
+{
+    ALint state = AL_PLAYING;
+    alCallImpl(alGetSourcei, _sourceId, AL_SOURCE_STATE, &state);
+    return state == AL_PLAYING;
+}
+
+bool Source::isStopped() const
+{
+    ALint state{};
+    alCallImpl(alGetSourcei, _sourceId, AL_SOURCE_STATE, &state);
+    return state == AL_STOPPED;
+}
+
+std::chrono::high_resolution_clock::duration Source::getDurationEstimation() const
+{
+    return _attachedBuffer->getDurationEstimation();
 }
