@@ -3,7 +3,7 @@
 #include <sndX/Loader.hpp>
 #include <sndX/SoundEngine.hpp>
 #include <sndX/Source.hpp>
-#include <sndX/AlHelpers.hpp>
+#include <sndX/ALHelpers.hpp>
 #include <chrono>
 #include <exception>
 #include <iostream>

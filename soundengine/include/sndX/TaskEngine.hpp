@@ -4,6 +4,8 @@
 #include <deque>
 #include <functional>
 #include <map>
+#include <mutex>
+#include <thread>
 
 namespace soundEngineX {
 using namespace std::chrono_literals;
@@ -32,7 +34,7 @@ public:
         Duration periodic_check_duration{16ms};
     };
 
-    TaskEngine(Config cfg = {});
+    TaskEngine(Config&& cfg = {.periodic_check_duration{16ms}});
     ~TaskEngine();
 
     // add a generic callable as a Task

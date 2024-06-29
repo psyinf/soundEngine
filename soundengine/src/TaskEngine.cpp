@@ -1,4 +1,5 @@
 #include <sndX/TaskEngine.hpp>
+#include <thread>
 
 void soundEngineX::TaskEngine::run()
 {
@@ -57,7 +58,7 @@ void soundEngineX::TaskEngine::checkTimedTasks()
     _cv.notify_one();
 }
 
-soundEngineX::TaskEngine::TaskEngine(Config config)
+soundEngineX::TaskEngine::TaskEngine(Config&& config)
   : _config(config)
 {
     _player_thread = std::jthread{&TaskEngine::run, this};
