@@ -3,7 +3,7 @@
 #include <sndX/Loader.hpp>
 #include <sndX/SoundEngine.hpp>
 #include <sndX/Source.hpp>
-
+#include <sndX/AlHelpers.hpp>
 #include <chrono>
 #include <exception>
 #include <iostream>
@@ -24,22 +24,18 @@ public:
     {
         using namespace std::chrono_literals;
         auto source = std::make_shared<soundEngineX::Source>(getOrLoadBuffer(name), std::move(cfg));
-        taskEngine.addTask([source]() { source->start(); });
-        // add cyclic task to check if source is still playing
-        // TODO: .starting_time_offset should be a around the estimated time to play the sound
+        auto duration = source->getDurationEstimation();
 
-        taskEngine.addTask({.task =
-                                [source]() {
-                                    std::cout << "Checking if source " << source->getSourceId() << " is playing\n ";
-                                    return !source->isPlaying();
-                                },
+        taskEngine.addTask([source]() { source->start(); });
+
+        taskEngine.addTask({.task = [source]() { return source->isStopped(); },
                             .reschedule_on_failure = true,
-                            .starting_time_offset = 1000ms,
-                            .reschedule_delay = 1500ms});
+                            .starting_time_offset = duration,
+                            .reschedule_delay = 100ms});
         return source->getSourceId();
     }
 
-    void stop(uint32_t sourceId) override { throw std::logic_error("The method or operation is not implemented."); }
+    void stop(uint32_t sourceId) override { alCallImpl(alSourceStop, sourceId); }
 
 private:
     soundEngineX::TaskEngine taskEngine;

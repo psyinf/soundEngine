@@ -71,10 +71,11 @@ private:
     std::mutex                      mutex;
     std::condition_variable         _cv;                     //< used to notify the player that a new task is available
     bool                            _task_available = false; //< flag to signal that a new task is available
-    std::atomic_bool                _running = true;         //< flag to signal that the player/checkThread is running
     std::deque<Task>                _tasks;                  //< tasks to be executed
     std::map<Task::TimePoint, Task> _timed_tasks;            //< tasks to be executed at a specific time
     Config                          _config{};
+    std::jthread                    _player_thread;
+    std::jthread                    _check_thread;
 };
 
 } // namespace soundEngineX

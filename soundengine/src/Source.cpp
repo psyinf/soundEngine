@@ -127,3 +127,15 @@ bool Source::isPlaying() const
     alCallImpl(alGetSourcei, _sourceId, AL_SOURCE_STATE, &state);
     return state == AL_PLAYING;
 }
+
+bool Source::isStopped() const
+{
+    ALint state{};
+    alCallImpl(alGetSourcei, _sourceId, AL_SOURCE_STATE, &state);
+    return state == AL_STOPPED;
+}
+
+std::chrono::high_resolution_clock::duration Source::getDurationEstimation() const
+{
+    return _attachedBuffer->getDurationEstimation();
+}

@@ -55,6 +55,8 @@ public:
         requestMoreDataCallback = requestDataFunction;
     }
 
+    std::chrono::high_resolution_clock::duration getDurationEstimation() const;
+
 private:
     void setBufferData(const auto& chunk, ALuint targetBuffer);
 

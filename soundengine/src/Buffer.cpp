@@ -117,6 +117,24 @@ const std::vector<ALuint>& soundEngineX::Buffer::getHandles() const
     return buffers;
 }
 
+std::chrono::high_resolution_clock::duration soundEngineX::Buffer::getDurationEstimation() const
+{
+    // for all buffers, get the duration
+    std::chrono::high_resolution_clock::duration duration = std::chrono::high_resolution_clock::duration::zero();
+    for (const auto& buffer : buffers)
+    {
+        ALint size, bitsPerSample, channels, frequency;
+        alCallImpl(alGetBufferi, buffer, AL_SIZE, &size);
+        alCallImpl(alGetBufferi, buffer, AL_BITS, &bitsPerSample);
+        alCallImpl(alGetBufferi, buffer, AL_CHANNELS, &channels);
+        alCallImpl(alGetBufferi, buffer, AL_FREQUENCY, &frequency);
+
+        duration += std::chrono::milliseconds(
+            static_cast<int>(1000 * static_cast<float>(size) / (channels * (bitsPerSample / 8) * frequency)));
+    }
+    return duration;
+}
+
 soundEngineX::Buffer::FormatType soundEngineX::Buffer::determineFormatType(const FormatDescriptor& format) const
 {
     switch (format.channels)

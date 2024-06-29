@@ -22,13 +22,14 @@ target_sources(${PROJECT_NAME}
         "src/loaders/LoadWave.cpp"
         "src/Buffer.cpp" 
         "src/BackgroundPlayerThreaded.cpp"
-        "src/TaskBasedPlayer.cpp"
+        "src/TaskEngine.cpp"
         "src/loaders/LoadMp3.cpp"
 
     PUBLIC
         "include/sndX/SoundEngine.hpp"
         "include/sndX/ALHelpers.hpp" 
         
+        "include/sndX/TaskEngine.hpp"
         "include/sndX/Source.hpp" 
         "include/sndX/Loader.hpp" 
         "include/sndX/Types.hpp" 

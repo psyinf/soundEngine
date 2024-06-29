@@ -65,6 +65,7 @@ public:
     void stop();
     void pause();
     bool isPlaying() const;
+    bool isStopped() const;
 
     void                       setSourceConfig(const SourceConfiguration& config);
     const SourceConfiguration& getSourceConfiguration() const;
@@ -73,6 +74,9 @@ public:
     uint32_t getSourceId() const { return _sourceId; };
 
     explicit operator ALuint() const { return _sourceId; };
+
+    std::chrono::high_resolution_clock::duration getDurationEstimation() const;
+    ;
 
 private:
     void fillStreamBuffers();
