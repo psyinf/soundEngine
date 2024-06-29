@@ -1,5 +1,5 @@
 #include <sndX/TaskEngine.hpp>
-#include <sndX/BackgroundPlayerInterface.hpp>
+#include <sndX/BackgroundPlayerTasked.hpp>
 #include <sndX/Loader.hpp>
 #include <sndX/SoundEngine.hpp>
 #include <sndX/Source.hpp>
@@ -9,41 +9,9 @@
 #include <iostream>
 #include <thread>
 
-class BackgroundPlayerTasked : public soundEngineX::BackgroundPlayerInterface
-{
-public:
-    BackgroundPlayerTasked()
-      : soundEngineX::BackgroundPlayerInterface()
-      , taskEngine()
-    {
-    }
-
-    void load(const std::string& name) override { getOrLoadBuffer(name); }
-
-    uint32_t play(const std::string& name, soundEngineX::SourceConfiguration&& cfg = {}) override
-    {
-        using namespace std::chrono_literals;
-        auto source = std::make_shared<soundEngineX::Source>(getOrLoadBuffer(name), std::move(cfg));
-        auto duration = source->getDurationEstimation();
-
-        taskEngine.addTask([source]() { source->start(); });
-
-        taskEngine.addTask({.task = [source]() { return source->isStopped(); },
-                            .reschedule_on_failure = true,
-                            .starting_time_offset = duration,
-                            .reschedule_delay = 100ms});
-        return source->getSourceId();
-    }
-
-    void stop(uint32_t sourceId) override { alCallImpl(alSourceStop, sourceId); }
-
-private:
-    soundEngineX::TaskEngine taskEngine;
-};
-
 void taskedPlayerTest()
 {
-    BackgroundPlayerTasked player;
+    soundEngineX::BackgroundPlayerTasked player;
     player.play("data/demo/click.wav");
     player.play("data/demo/test.wav");
     player.play("data/demo/mixkit-repeating-arcade-beep-1084.wav");
