@@ -28,7 +28,7 @@ target_sources(${PROJECT_NAME}
     PUBLIC
         "include/sndX/SoundEngine.hpp"
         "include/sndX/ALHelpers.hpp" 
-        
+        "include/sndX/SourceManager.hpp"
         "include/sndX/TaskEngine.hpp"
         "include/sndX/Source.hpp" 
         "include/sndX/Loader.hpp" 

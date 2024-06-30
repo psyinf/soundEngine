@@ -14,7 +14,7 @@ public:
     std::vector<std::string> getExtensions() const;
 
     void pauseAll();
-    void resumeAll();
+    void startAll();
     void stopAll();
 
 private:

@@ -1,6 +1,7 @@
 #include <sndX/SoundEngine.hpp>
 #include <sndX/ALHelpers.hpp>
-#include <sndX/SoundManager.hpp>
+#include <sndX/SourceManager.hpp>
+
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <iostream>
@@ -103,12 +104,28 @@ std::vector<std::string> SoundEngine::getExtensions() const
     return alc_exts;
 }
 
-void SoundEngine::pauseAll()
+template <auto F>
+void forAllSources()
 {
-    std::ranges::for_each(SourceManager::getSources(), [](auto& source) { source.pause(); });
+    // copy all sources to a new vector
+    std::vector<ALuint> srcs{SourceManager::getSources().begin(), SourceManager::getSources().end()};
+    alCallImpl(F, static_cast<ALsizei>(srcs.size()), srcs.data());
 }
 
-void SoundEngine::resumeAll()
+void SoundEngine::pauseAll()
 {
-    std::ranges::for_each(SourceManager::getSources(), [](auto& source) { source.resume(); });
+    // pause all sources
+    forAllSources<alSourcePausev>();
+}
+
+void SoundEngine::startAll()
+{
+    // pause all sources
+    forAllSources<alSourcePlayv>();
+}
+
+void SoundEngine::stopAll()
+{
+    // pause all sources
+    forAllSources<alSourceStopv>();
 }

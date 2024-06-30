@@ -17,7 +17,7 @@ public:
     static bool hasSource(soundEngineX::Source::SourceHandle source) { return sources.find(source) != sources.end(); }
 
 private:
-    static std::unordered_set<soundEngineX::Source::SourceHandle> sources;
+    inline static std::unordered_set<soundEngineX::Source::SourceHandle> sources{};
 };
 
 } // namespace soundEngineX
