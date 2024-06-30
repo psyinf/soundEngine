@@ -1,5 +1,6 @@
 #include <sndX/SoundEngine.hpp>
 #include <sndX/ALHelpers.hpp>
+#include <sndX/SoundManager.hpp>
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <iostream>
@@ -100,4 +101,14 @@ std::vector<std::string> SoundEngine::getExtensions() const
         alc_exts.push_back(ext);
     }
     return alc_exts;
+}
+
+void SoundEngine::pauseAll()
+{
+    std::ranges::for_each(SourceManager::getSources(), [](auto& source) { source.pause(); });
+}
+
+void SoundEngine::resumeAll()
+{
+    std::ranges::for_each(SourceManager::getSources(), [](auto& source) { source.resume(); });
 }

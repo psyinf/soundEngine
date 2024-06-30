@@ -13,6 +13,10 @@ public:
     std::vector<std::string> getDevices() const;
     std::vector<std::string> getExtensions() const;
 
+    void pauseAll();
+    void resumeAll();
+    void stopAll();
+
 private:
     void init();
 
