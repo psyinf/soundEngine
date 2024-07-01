@@ -1,5 +1,5 @@
 #include <sndX/TaskEngine.hpp>
-#include <sndX/BackgroundPlayerTasked.hpp>
+#include <sndX/BackgroundPlayer.hpp>
 #include <sndX/Loader.hpp>
 #include <sndX/SoundEngine.hpp>
 #include <sndX/Source.hpp>
@@ -11,7 +11,7 @@
 
 void taskedPlayerTest()
 {
-    soundEngineX::BackgroundPlayerTasked player;
+    soundEngineX::BackgroundPlayer player;
     player.play("data/demo/click.wav");
     player.play("data/demo/test.wav");
     player.play("data/demo/mixkit-repeating-arcade-beep-1084.wav");

@@ -1,17 +1,46 @@
 #pragma once
-#include <sndX/Buffer.hpp>
-#include <sndX/Source.hpp>
-#include <atomic>
-#include <memory>
-
-#include <sndX/BackgroundPlayerInterface.hpp>
-#include <sndX/BackgroundPlayerTasked.hpp>
-#include <sndX/BackgroundPlayerThreaded.hpp>
+#include <sndX/BufferCache.hpp>
+#include <sndX/TaskEngine.hpp>
+#include <sndX/ALHelpers.hpp>
+#include <spdlog/spdlog.h>
 
 namespace soundEngineX {
-#ifdef FALLBACK_PLAYER
-using BackgroundPlayer = BackgroundPlayerThreaded;
-#else
-using BackgroundPlayer = BackgroundPlayerTasked;
-#endif
+
+class BackgroundPlayer
+{
+public:
+    BackgroundPlayer()
+      : taskEngine()
+    {
+    }
+
+    // pre-load a buffer
+    void load(const std::string& name) { BufferCache::get(name); }
+
+    uint32_t play(const std::string& name, soundEngineX::SourceConfiguration&& cfg = {})
+    {
+        using namespace std::chrono_literals;
+        auto       source = std::make_shared<soundEngineX::Source>(BufferCache::get(name), std::move(cfg));
+        const auto duration = source->getDurationEstimation();
+
+        taskEngine.addTask([source]() { source->start(); });
+
+        taskEngine.addTask({.task = [source]() { return source->isStopped(); },
+                            .reschedule_on_failure = true,
+                            .starting_time_offset = duration,
+                            .reschedule_delay = 100ms});
+        return source->getSourceId();
+    }
+
+    void stop(uint32_t sourceId)
+    {
+        taskEngine.addTask([sourceId]() { alCallImpl(alSourceStop, sourceId); });
+    }
+
+    void forceCheckPending() { taskEngine.checkTimedTasks(); }
+
+private:
+    soundEngineX::TaskEngine taskEngine;
+};
+
 } // namespace soundEngineX

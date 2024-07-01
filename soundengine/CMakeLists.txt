@@ -21,7 +21,7 @@ target_sources(${PROJECT_NAME}
         "src/Loader.cpp" 
         "src/loaders/LoadWave.cpp"
         "src/Buffer.cpp" 
-        "src/BackgroundPlayerThreaded.cpp"
+        
         "src/TaskEngine.cpp"
         "src/loaders/LoadMp3.cpp"
 
@@ -35,8 +35,6 @@ target_sources(${PROJECT_NAME}
         "include/sndX/Types.hpp" 
         "include/sndX/Buffer.hpp"
         "include/sndX/ErrorTrace.hpp"
-        "include/sndX/BackgroundPlayerInterface.hpp"
-        "include/sndX/BackgroundPlayerThreaded.hpp"
         "include/sndX/BackgroundPlayer.hpp"
     
     PRIVATE        
