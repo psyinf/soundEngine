@@ -37,7 +37,7 @@ public:
         taskEngine.addTask([sourceId]() { alCallImpl(alSourceStop, sourceId); });
     }
 
-    void forceCheckPending() { taskEngine.checkTimedTasks(); }
+    void forceCheckPending() { taskEngine.forceCheckTimedTasks(); }
 
 private:
     soundEngineX::TaskEngine taskEngine;
