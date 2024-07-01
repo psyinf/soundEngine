@@ -44,9 +44,14 @@ void soundEngineX::TaskEngine::wait()
 void soundEngineX::TaskEngine::checkTimedTasks()
 {
     auto now = std::chrono::high_resolution_clock::now();
+    checkTimedTasks(now);
+}
+
+void soundEngineX::TaskEngine::checkTimedTasks(const Task::TimePoint& time)
+{
     // get all delayed task with deadline passed
     const std::lock_guard lk(mutex);
-    auto                  iter = _timed_tasks.lower_bound(now);
+    auto                  iter = _timed_tasks.lower_bound(time);
     // emplace all tasks from the map to the queue
     for (auto it = _timed_tasks.begin(); it != iter; it++)
     {
@@ -99,4 +104,20 @@ void soundEngineX::TaskEngine::addTask(Task&& task)
         //
         _timed_tasks[task.starting_time_offset + now] = std::move(task);
     }
+}
+
+void soundEngineX::TaskEngine::forceCheckTimedTasks()
+{
+    // get all delayed task with deadline passed
+    const std::lock_guard lk(mutex);
+    auto                  iter = _timed_tasks.lower_bound(Task::TimePoint::max());
+    // emplace all tasks from the map to the queue
+    for (auto it = _timed_tasks.begin(); it != iter; it++)
+    {
+        _tasks.emplace_back(std::move(it->second));
+    }
+
+    _timed_tasks.erase(_timed_tasks.begin(), iter);
+    _task_available = true;
+    _cv.notify_one();
 }

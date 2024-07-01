@@ -61,6 +61,8 @@ public:
     void addTask(Task&& task);
     // check for task's deadline and move them to the task queue
     void checkTimedTasks();
+    // forced run of checkTimedTasks
+    void forceCheckTimedTasks();
 
     // wait for all tasks to finish
     void wait();
@@ -68,6 +70,7 @@ public:
     void stop();
 
 private:
+    void checkTimedTasks(const Task::TimePoint& time);
     void run();
 
     std::mutex                      mutex;
