@@ -38,6 +38,7 @@ SoundEngine::SoundEngine()
 
 SoundEngine::~SoundEngine()
 {
+    stopAll();
     // all buffers should be unqueued and deleted before deleting the source
     // alSourcei(sourceID, AL_BUFFER, null);
     spdlog::debug("Destroying sound engine");

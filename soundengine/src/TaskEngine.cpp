@@ -81,7 +81,6 @@ soundEngineX::TaskEngine::TaskEngine(Config&& config)
 
 soundEngineX::TaskEngine::~TaskEngine()
 {
-    wait();
     stop();
     _player_thread.request_stop();
     _cv.notify_all();
