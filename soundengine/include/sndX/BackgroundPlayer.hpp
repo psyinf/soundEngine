@@ -39,6 +39,8 @@ public:
 
     void forceCheckPending() { taskEngine.forceCheckTimedTasks(); }
 
+    bool hasPendingTasks() const { return !taskEngine.hasTimedTasks(); }
+
 private:
     soundEngineX::TaskEngine taskEngine;
 };

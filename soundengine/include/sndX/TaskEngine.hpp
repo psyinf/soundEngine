@@ -69,11 +69,17 @@ public:
     // stop the player
     void stop();
 
+    bool hasTimedTasks() const
+    {
+        std::unique_lock lk(mutex);
+        return !_timed_tasks.empty();
+    }
+
 private:
     void checkTimedTasks(const Task::TimePoint& time);
     void run();
 
-    std::mutex                      mutex;
+    mutable std::mutex              mutex;
     std::condition_variable         _cv;                     //< used to notify the player that a new task is available
     bool                            _task_available = false; //< flag to signal that a new task is available
     std::deque<Task>                _tasks;                  //< tasks to be executed
