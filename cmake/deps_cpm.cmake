@@ -95,5 +95,7 @@ CPMAddPackage(
     NAME data
     GITHUB_REPOSITORY psyinf/resources-sound
     GIT_TAG main
+
+    OPTIONS "INSTALL_PATH ${CMAKE_INSTALL_BINDIR}"
 )
 endif()
