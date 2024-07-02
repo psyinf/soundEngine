@@ -84,7 +84,9 @@ soundEngineX::TaskEngine::~TaskEngine()
     wait();
     stop();
     _player_thread.request_stop();
+    _cv.notify_all();
     _check_thread.request_stop();
+    _cv.notify_all();
     _player_thread.join();
     _check_thread.join();
 }
