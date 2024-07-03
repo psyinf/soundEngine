@@ -46,8 +46,8 @@ soundEngineX::DataChunk soundEngineX::format::load_mp3(std::istream& /*in*/)
 
 soundEngineX::DataChunk soundEngineX::format::load_mp3(std::string_view filename)
 {
-    mp3dec_t           dec;
-    mp3dec_file_info_t mp3Info;
+    mp3dec_t           dec{};
+    mp3dec_file_info_t mp3Info{};
     mp3dec_init(&dec);
     auto guard = nonstd::make_scope_exit([&mp3Info] {
         // there is seamingly no mp3dec_free/close
