@@ -1,5 +1,6 @@
 #pragma once
 #include <sndX/Types.hpp>
+#include <atomic>
 #include <string>
 #include <vector>
 
@@ -22,6 +23,7 @@ private:
 
     Device  _device;
     Context _context{nullptr};
+    static inline std::atomic_uint32_t _instanceCount{};
 };
 
 } // namespace soundEngineX
