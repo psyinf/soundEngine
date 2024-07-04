@@ -39,21 +39,47 @@ inline void mp3CallImpl(mp3decFunc function, Params&&... params)
     }
 }
 
-soundEngineX::DataChunk soundEngineX::format::load_mp3(std::istream& /*in*/)
+soundEngineX::DataChunk soundEngineX::format::load_mp3(std::istream& /*in*/,
+                                                       soundEngineX::loader::LoadingCallback progress_cb)
 {
     throw std::runtime_error("Not yet implemented");
 }
 
-soundEngineX::DataChunk soundEngineX::format::load_mp3(std::string_view filename)
+struct ProgressCBInfo
+{
+    soundEngineX::loader::LoadingCallback  progress_cb;
+    std::string                            filename;
+    soundEngineX::loader::LoadProgressInfo lastProgress;
+};
+
+MP3D_PROGRESS_CB makeCallbackWrapper()
+{
+    return +[](void* user_data, size_t file_size, uint64_t offset, mp3dec_frame_info_t*) -> int {
+        auto& [cb, filename, lastProgress] = *reinterpret_cast<ProgressCBInfo*>(user_data);
+        // only issue if progress has changed by more than 1%
+        if (cb.cb && (offset - lastProgress.loaded_size) > (file_size / 100))
+        {
+            lastProgress = {offset, file_size};
+            cb.cb({offset, file_size});
+        }
+        return 0;
+    };
+}
+
+soundEngineX::DataChunk soundEngineX::format::load_mp3(std::string_view                      filename,
+                                                       soundEngineX::loader::LoadingCallback progress_cb)
 {
     mp3dec_t           dec{};
     mp3dec_file_info_t mp3Info{};
     mp3dec_init(&dec);
-    auto guard = nonstd::make_scope_exit([&mp3Info] {
-        // there is seamingly no mp3dec_free/close
+    auto           guard = nonstd::make_scope_exit([&mp3Info] {
+        // there is seemingly no mp3dec_free/close
         ::free(static_cast<void*>(mp3Info.buffer));
     });
-    mp3CallImpl(mp3dec_load, &dec, filename.data(), &mp3Info, nullptr, nullptr);
+    ProgressCBInfo cb_info{progress_cb, "filename"};
+
+    mp3CallImpl(
+        mp3dec_load, &dec, filename.data(), &mp3Info, progress_cb.cb ? makeCallbackWrapper() : nullptr, &cb_info);
 
     spdlog::debug("Freq {} Hz, {} Kbits/s", mp3Info.hz, mp3Info.avg_bitrate_kbps);
 
