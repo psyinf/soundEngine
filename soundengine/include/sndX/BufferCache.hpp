@@ -11,12 +11,14 @@ namespace soundEngineX {
 class BufferCache
 {
 public:
-    static std::shared_ptr<soundEngineX::Buffer>& get(const std::string& filename)
+    static std::shared_ptr<soundEngineX::Buffer>& get(const std::string&                    filename,
+                                                      soundEngineX::loader::LoadingCallback progress_cb = {})
     {
         auto it = buffers.find(filename);
         if (it == buffers.end())
         {
-            buffers[filename] = std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load(filename));
+            buffers[filename] =
+                std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load(filename, progress_cb));
         }
         return buffers[filename];
     }

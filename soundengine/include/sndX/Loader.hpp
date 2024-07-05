@@ -9,6 +9,8 @@ struct LoadProgressInfo
 {
     uint64_t loaded_size{};
     size_t   complete_size{};
+
+    float percent() const { return static_cast<float>(loaded_size) / static_cast<float>(complete_size); }
 };
 
 struct LoadingCallback
