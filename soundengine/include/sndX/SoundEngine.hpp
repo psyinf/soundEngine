@@ -23,7 +23,6 @@ private:
 
     Device  _device;
     Context _context{nullptr};
-    static inline std::atomic_uint32_t _instanceCount{};
 };
 
 } // namespace soundEngineX

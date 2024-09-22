@@ -34,13 +34,10 @@ SoundEngine::SoundEngine()
         spdlog::debug("Device: {}", dev);
     }
     init();
-    _instanceCount++;
 }
 
 SoundEngine::~SoundEngine()
 {
-    _instanceCount--;
-    if (_instanceCount > 0) return;
     stopAll();
     // all buffers should be unqueued and deleted before deleting the source
     // alSourcei(sourceID, AL_BUFFER, null);
