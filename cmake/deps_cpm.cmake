@@ -61,8 +61,14 @@ CPMAddPackage(
     "ALSOFT_TESTS OFF"
     "ALSOFT_INSTALL OFF"
     "ALSOFT_CONFIG OFF"
-    
+)
 
+
+CPMAddPackage(
+    NAME pgfoundation
+
+    GITHUB_REPOSITORY psyinf/pgfoundation
+    GIT_TAG main
 )
 
 CPMAddPackage(

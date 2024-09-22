@@ -1,4 +1,4 @@
-#include <sndX/TaskEngine.hpp>
+// #include <pgfoundation/taskengine.hpp>
 #include <sndX/BackgroundPlayer.hpp>
 #include <sndX/Loader.hpp>
 #include <sndX/SoundEngine.hpp>
@@ -19,7 +19,7 @@ void taskedPlayerTest()
 
 void taskedEngineTest()
 {
-    soundEngineX::TaskEngine player;
+    pgf::TaskEngine player;
     using namespace std::chrono_literals;
     auto now = std::chrono::high_resolution_clock::now();
     int  state = 0;
@@ -50,11 +50,11 @@ void taskedEngineTest()
 
 void taskedPlayerSoundTest()
 {
-    soundEngineX::TaskEngine player;
-    auto src1 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/click.wav"));
-    auto src2 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/test.wav"));
+    pgf::TaskEngine player;
+    auto            src1 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/click.wav"));
+    auto            src2 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/test.wav"));
 
-    player.addTask(soundEngineX::Task{.task = [&src1]() {
+    player.addTask(pgf::Task{.task = [&src1]() {
         src1->start();
         return "";
     }});

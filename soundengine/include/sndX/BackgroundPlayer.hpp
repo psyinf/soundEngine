@@ -1,6 +1,6 @@
 #pragma once
 #include <sndX/BufferCache.hpp>
-#include <sndX/TaskEngine.hpp>
+#include <pgf/taskengine/TaskEngine.hpp>
 #include <sndX/ALHelpers.hpp>
 #include <spdlog/spdlog.h>
 
@@ -42,7 +42,7 @@ public:
     bool hasPendingTasks() const { return !taskEngine.hasTimedTasks(); }
 
 private:
-    soundEngineX::TaskEngine taskEngine;
+    pgf::TaskEngine taskEngine;
 };
 
 } // namespace soundEngineX

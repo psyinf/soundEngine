@@ -21,15 +21,12 @@ target_sources(${PROJECT_NAME}
         "src/Loader.cpp" 
         "src/loaders/LoadWave.cpp"
         "src/Buffer.cpp" 
-        
-        "src/TaskEngine.cpp"
         "src/loaders/LoadMp3.cpp"
 
     PUBLIC
         "include/sndX/SoundEngine.hpp"
         "include/sndX/ALHelpers.hpp" 
         "include/sndX/SourceManager.hpp"
-        "include/sndX/TaskEngine.hpp"
         "include/sndX/Source.hpp" 
         "include/sndX/Loader.hpp" 
         "include/sndX/Types.hpp" 
@@ -54,8 +51,10 @@ target_link_libraries(
         minimp3::minimp3
         nonstd::scope-lite
         ${ADDITIONAL_LIBS}
+        pgf::pgf
     PRIVATE
         fmt::fmt
+
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES 
