@@ -66,9 +66,8 @@ CPMAddPackage(
 
 CPMAddPackage(
     NAME pgfoundation
-
     GITHUB_REPOSITORY psyinf/pgfoundation
-    GIT_TAG main
+    GIT_TAG features
 )
 
 CPMAddPackage(

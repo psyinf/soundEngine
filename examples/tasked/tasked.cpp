@@ -19,7 +19,7 @@ void taskedPlayerTest()
 
 void taskedEngineTest()
 {
-    pgf::TaskEngine player;
+    pg::foundation::TaskEngine player;
     using namespace std::chrono_literals;
     auto now = std::chrono::high_resolution_clock::now();
     int  state = 0;
@@ -50,11 +50,11 @@ void taskedEngineTest()
 
 void taskedPlayerSoundTest()
 {
-    pgf::TaskEngine player;
-    auto            src1 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/click.wav"));
-    auto            src2 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/test.wav"));
+    pg::foundation::TaskEngine player;
+    auto src1 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/click.wav"));
+    auto src2 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/test.wav"));
 
-    player.addTask(pgf::Task{.task = [&src1]() {
+    player.addTask(pg::foundation::Task{.task = [&src1]() {
         src1->start();
         return "";
     }});

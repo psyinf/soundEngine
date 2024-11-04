@@ -42,7 +42,7 @@ public:
     bool hasPendingTasks() const { return !taskEngine.hasTimedTasks(); }
 
 private:
-    pgf::TaskEngine taskEngine;
+    pg::foundation::TaskEngine taskEngine;
 };
 
 } // namespace soundEngineX
