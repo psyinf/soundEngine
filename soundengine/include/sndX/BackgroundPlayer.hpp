@@ -2,7 +2,6 @@
 #include <sndX/BufferCache.hpp>
 #include <pgf/taskengine/TaskEngine.hpp>
 #include <sndX/ALHelpers.hpp>
-#include <spdlog/spdlog.h>
 
 namespace soundEngineX {
 

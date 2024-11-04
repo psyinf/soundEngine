@@ -52,9 +52,9 @@ target_link_libraries(
         nonstd::scope-lite
         ${ADDITIONAL_LIBS}
         pgf::pgf
+
     PRIVATE
         fmt::fmt
-
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES 
