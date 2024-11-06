@@ -22,6 +22,8 @@ target_sources(${PROJECT_NAME}
         "src/loaders/LoadWave.cpp"
         "src/Buffer.cpp" 
         "src/loaders/LoadMp3.cpp"
+        "src/Listener.cpp"
+        "src/BackgroundPlayer.cpp"
 
     PUBLIC
         "include/sndX/SoundEngine.hpp"
@@ -33,10 +35,12 @@ target_sources(${PROJECT_NAME}
         "include/sndX/Buffer.hpp"
         "include/sndX/ErrorTrace.hpp"
         "include/sndX/BackgroundPlayer.hpp"
+        "include/sndX/Listener.hpp"
     
     PRIVATE        
         "src/loaders/LoadMp3.hpp"
         "src/loaders/LoadWave.hpp" 
+
 )
 target_include_directories(
     ${PROJECT_NAME}

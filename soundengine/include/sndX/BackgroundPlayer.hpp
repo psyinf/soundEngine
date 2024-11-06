@@ -8,37 +8,20 @@ namespace soundEngineX {
 class BackgroundPlayer
 {
 public:
-    BackgroundPlayer()
-      : taskEngine()
-    {
-    }
+    BackgroundPlayer();
 
     // pre-load a buffer
-    void load(const std::string& name) { BufferCache::get(name); }
+    void load(const std::string& name);
 
-    uint32_t play(const std::string& name, soundEngineX::SourceConfiguration&& cfg = {})
-    {
-        using namespace std::chrono_literals;
-        auto       source = std::make_shared<soundEngineX::Source>(BufferCache::get(name), std::move(cfg));
-        const auto duration = source->getDurationEstimation();
+    // play a sound
+    uint32_t play(const std::string& name, soundEngineX::SourceConfiguration&& cfg = {});
 
-        taskEngine.addTask([source]() { source->start(); });
+    // stop a sound
+    void stop(uint32_t sourceId);
 
-        taskEngine.addTask({.task = [source]() { return source->isStopped(); },
-                            .reschedule_on_failure = true,
-                            .starting_time_offset = duration,
-                            .reschedule_delay = 100ms});
-        return source->getSourceId();
-    }
+    void forceCheckPending();
 
-    void stop(uint32_t sourceId)
-    {
-        taskEngine.addTask([sourceId]() { alCallImpl(alSourceStop, sourceId); });
-    }
-
-    void forceCheckPending() { taskEngine.forceCheckTimedTasks(); }
-
-    bool hasPendingTasks() const { return !taskEngine.hasTimedTasks(); }
+    bool hasPendingTasks() const;
 
 private:
     pg::foundation::TaskEngine taskEngine;
