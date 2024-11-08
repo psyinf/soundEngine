@@ -40,7 +40,6 @@ target_sources(${PROJECT_NAME}
     PRIVATE        
         "src/loaders/LoadMp3.hpp"
         "src/loaders/LoadWave.hpp" 
-
 )
 target_include_directories(
     ${PROJECT_NAME}

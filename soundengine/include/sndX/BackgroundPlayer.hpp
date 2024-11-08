@@ -8,13 +8,14 @@ namespace soundEngineX {
 class BackgroundPlayer
 {
 public:
+    using PlaybackFinishedCallback = std::function<void()>;
     BackgroundPlayer();
 
     // pre-load a buffer
     void load(const std::string& name);
 
     // play a sound
-    uint32_t play(const std::string& name, soundEngineX::SourceConfiguration&& cfg = {});
+    uint32_t play(const std::string& name, soundEngineX::SourceConfiguration&& cfg = {}, PlaybackFinishedCallback = {});
 
     // stop a sound
     void stop(uint32_t sourceId);
