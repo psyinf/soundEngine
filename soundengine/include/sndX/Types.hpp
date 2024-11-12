@@ -39,6 +39,15 @@ struct Context
 
 struct Holder
 {
+    static void attempt_clean()
+    {
+        if (_shared_context.use_count() == 1)
+        {
+            _shared_device.reset();
+            _shared_context.reset();
+        }
+    }
+
     static std::shared_ptr<Device> getDevice()
     {
         if (!_shared_device) { _shared_device = std::make_shared<Device>(""); }

@@ -86,3 +86,10 @@ void SoundEngine::stopAll()
     // pause all sources
     forAllSources<alSourceStopv>();
 }
+
+SoundEngine::~SoundEngine()
+{
+    _context.reset();
+    _device.reset();
+    Holder::attempt_clean();
+}

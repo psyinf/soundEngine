@@ -9,7 +9,8 @@ class SoundEngine
 {
 public:
     SoundEngine();
-    ~SoundEngine() = default;
+
+    ~SoundEngine();
 
     std::vector<std::string> getDevices() const;
     std::vector<std::string> getExtensions() const;
