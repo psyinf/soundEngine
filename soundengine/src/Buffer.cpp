@@ -84,6 +84,7 @@ soundEngineX::Buffer::~Buffer()
     {
         if (alIsBuffer(buffer)) { validBuffers.push_back(buffer); }
     }
+    if (validBuffers.empty()) { return; }
     alCallImpl(alDeleteBuffers, static_cast<ALsizei>(validBuffers.size()), validBuffers.data());
 }
 
