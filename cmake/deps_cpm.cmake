@@ -61,8 +61,13 @@ CPMAddPackage(
     "ALSOFT_TESTS OFF"
     "ALSOFT_INSTALL OFF"
     "ALSOFT_CONFIG OFF"
-    
+)
 
+
+CPMAddPackage(
+    NAME pgf
+    GITHUB_REPOSITORY psyinf/pgfoundation
+    GIT_TAG features
 )
 
 CPMAddPackage(
@@ -95,5 +100,7 @@ CPMAddPackage(
     NAME data
     GITHUB_REPOSITORY psyinf/resources-sound
     GIT_TAG main
+
+    OPTIONS "INSTALL_PATH ${CMAKE_INSTALL_BINDIR}"
 )
 endif()

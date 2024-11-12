@@ -1,5 +1,6 @@
 #pragma once
 #include <sndX/Types.hpp>
+#include <atomic>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,10 @@ public:
 
     std::vector<std::string> getDevices() const;
     std::vector<std::string> getExtensions() const;
+
+    void pauseAll();
+    void startAll();
+    void stopAll();
 
 private:
     void init();

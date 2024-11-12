@@ -1,17 +1,31 @@
 #pragma once
-#include <sndX/Buffer.hpp>
-#include <sndX/Source.hpp>
-#include <atomic>
-#include <memory>
-
-#include <sndX/BackgroundPlayerInterface.hpp>
-#include <sndX/BackgroundPlayerTasked.hpp>
-#include <sndX/BackgroundPlayerThreaded.hpp>
+#include <sndX/BufferCache.hpp>
+#include <pgf/taskengine/TaskEngine.hpp>
+#include <sndX/ALHelpers.hpp>
 
 namespace soundEngineX {
-#ifdef FALLBACK_PLAYER
-using BackgroundPlayer = BackgroundPlayerThreaded;
-#else
-using BackgroundPlayer = BackgroundPlayerTasked;
-#endif
+
+class BackgroundPlayer
+{
+public:
+    using PlaybackFinishedCallback = std::function<void()>;
+    BackgroundPlayer();
+
+    // pre-load a buffer
+    void load(const std::string& name);
+
+    // play a sound
+    uint32_t play(const std::string& name, soundEngineX::SourceConfiguration&& cfg = {}, PlaybackFinishedCallback = {});
+
+    // stop a sound
+    void stop(uint32_t sourceId);
+
+    void forceCheckPending();
+
+    bool hasPendingTasks() const;
+
+private:
+    pg::foundation::TaskEngine taskEngine;
+};
+
 } // namespace soundEngineX

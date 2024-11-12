@@ -45,8 +45,8 @@ inline bool check_alc_errors(ALCdevice* device)
         default:
             reportError(fmt::format("UNKNOWN ALC ERROR: {}", error));
         }
-        errorTrace::printErrorTrace();
         std::cerr << "\n";
+        errorTrace::printErrorTrace();
         return false;
     }
     return true;
@@ -78,8 +78,8 @@ inline bool check_al_errors()
         default:
             std::cerr << "UNKNOWN AL ERROR: " << error;
         }
-        errorTrace::printErrorTrace();
         std::cerr << "\n";
+        errorTrace::printErrorTrace();
 
         return false;
     }

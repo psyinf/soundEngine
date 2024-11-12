@@ -5,23 +5,23 @@
 
 namespace soundEngineX::loader {
 
-DataDescriptor load(std::string_view name)
+DataDescriptor load(std::string_view name, LoadingCallback progress_cb)
 {
     auto type = getType(name);
     // return load(, type);
-    return load(name, type);
+    return load(name, type, progress_cb);
 }
 
-DataDescriptor load(std::string_view name, Type type)
+DataDescriptor load(std::string_view name, Type type, LoadingCallback progress_cb)
 {
     switch (type)
     {
     case Type::WAV: {
-        auto&& chunk = soundEngineX::format::load_wav(name);
+        auto&& chunk = soundEngineX::format::load_wav(name, progress_cb);
         return DataDescriptor{{chunk}};
     }
     case Type::MP3: {
-        auto&& chunk = soundEngineX::format::load_mp3(name);
+        auto&& chunk = soundEngineX::format::load_mp3(name, progress_cb);
         return DataDescriptor{{chunk}};
     }
     break;
@@ -31,12 +31,12 @@ DataDescriptor load(std::string_view name, Type type)
     }
 }
 
-DataDescriptor loadMultiple(const std::vector<std::string>& names)
+DataDescriptor loadMultiple(const std::vector<std::string>& names, soundEngineX::loader::LoadingCallback progress_cb)
 {
     DataDescriptor dataDescriptor{};
     for (const auto& name : names)
     {
-        auto loadedDescriptor = load(name);
+        auto loadedDescriptor = load(name, progress_cb);
         dataDescriptor.chunks.insert(
             dataDescriptor.chunks.end(), loadedDescriptor.chunks.begin(), loadedDescriptor.chunks.end());
     }

@@ -1,5 +1,7 @@
 #include <sndX/SoundEngine.hpp>
 #include <sndX/ALHelpers.hpp>
+#include <sndX/SourceManager.hpp>
+
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <iostream>
@@ -31,11 +33,14 @@ SoundEngine::SoundEngine()
     {
         spdlog::debug("Device: {}", dev);
     }
+
     init();
 }
 
 SoundEngine::~SoundEngine()
 {
+    stopAll();
+    SourceManager::clear();
     // all buffers should be unqueued and deleted before deleting the source
     // alSourcei(sourceID, AL_BUFFER, null);
     spdlog::debug("Destroying sound engine");
@@ -58,18 +63,21 @@ SoundEngine::~SoundEngine()
 void SoundEngine::init()
 {
     _device = {alcOpenDevice(nullptr)};
-
-    if (!alcCallImpl(alcCreateContext, _context, _device, _device, nullptr) || !_context)
+    if (!_context)
     {
-        /* probably exit program */
-        throw std::runtime_error("Could not create audio context");
-    }
+        if (!alcCallImpl(alcCreateContext, _context, _device, _device, nullptr) || !_context)
+        {
+            /* probably exit program */
+            throw std::runtime_error("Could not create audio context");
+        }
 
-    ALCboolean contextMadeCurrent = false;
-    if (!alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, _device, _context) || contextMadeCurrent != ALC_TRUE)
-    {
-        /* probably exit or give up on having sound */
-        throw std::runtime_error("Could not make audio context current");
+        ALCboolean contextMadeCurrent = false;
+        if (!alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, _device, _context) ||
+            contextMadeCurrent != ALC_TRUE)
+        {
+            /* probably exit or give up on having sound */
+            throw std::runtime_error("Could not make audio context current");
+        }
     }
 }
 
@@ -100,4 +108,31 @@ std::vector<std::string> SoundEngine::getExtensions() const
         alc_exts.push_back(ext);
     }
     return alc_exts;
+}
+
+template <auto F>
+void forAllSources()
+{
+    // copy all sources to a new vector
+    std::vector<ALuint> srcs{SourceManager::getSources().begin(), SourceManager::getSources().end()};
+    if (srcs.empty()) return;
+    alCallImpl(F, static_cast<ALsizei>(srcs.size()), srcs.data());
+}
+
+void SoundEngine::pauseAll()
+{
+    // pause all sources
+    forAllSources<alSourcePausev>();
+}
+
+void SoundEngine::startAll()
+{
+    // pause all sources
+    forAllSources<alSourcePlayv>();
+}
+
+void SoundEngine::stopAll()
+{
+    // pause all sources
+    forAllSources<alSourceStopv>();
 }
