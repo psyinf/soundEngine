@@ -43,7 +43,6 @@ void queuedBufferRepeat()
                                 "data/demo/stop.wav",
                                 "data/demo/stop.wav"},
                                3);
-    auto source = soundEngineX::Source();
 
     std::shared_ptr<soundEngineX::Buffer> buffer = std::make_unique<soundEngineX::Buffer>(
         soundEngineX::loader::loadMultiple({"data/demo/click.wav", "data/demo/test.wav"}));
@@ -55,7 +54,7 @@ void queuedBufferRepeat()
 
     });
 
-    source.attachBuffer(buffer);
+    auto source = soundEngineX::Source(buffer);
 
     source.setSourceConfig({
         .pitch = 3.5,

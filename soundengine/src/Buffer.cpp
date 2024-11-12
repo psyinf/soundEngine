@@ -78,7 +78,13 @@ soundEngineX::Buffer::Buffer(size_t num_chunks)
 
 soundEngineX::Buffer::~Buffer()
 {
-    alCallImpl(alDeleteBuffers, static_cast<ALsizei>(buffers.size()), buffers.data());
+    // filter out already deleted buffers
+    std::vector<ALuint> validBuffers;
+    for (const auto& buffer : buffers)
+    {
+        if (alIsBuffer(buffer)) { validBuffers.push_back(buffer); }
+    }
+    alCallImpl(alDeleteBuffers, static_cast<ALsizei>(validBuffers.size()), validBuffers.data());
 }
 
 std::vector<ALuint> soundEngineX::Buffer::buffersUnqueued(const std::vector<ALuint>& unqueuedBuffers)

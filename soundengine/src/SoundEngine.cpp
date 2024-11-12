@@ -7,7 +7,6 @@
 #include <iostream>
 #include <ranges>
 #include <string>
-#include <string_view>
 
 using namespace soundEngineX;
 
@@ -27,71 +26,9 @@ std::vector<std::string> alStringToVector(const ALCchar* list, const char separa
 }
 
 SoundEngine::SoundEngine()
+  : _device(Holder::getDevice())
+  , _context(Holder::getContext())
 {
-    spdlog::debug("Available devices:");
-    for (const auto& dev : getDevices())
-    {
-        spdlog::debug("Device: {}", dev);
-    }
-
-    init();
-}
-
-SoundEngine::~SoundEngine()
-{
-    _device = nullptr;
-    _context = nullptr;
-
-    if (_shared_device.use_count() == 1)
-    {
-        stopAll();
-        SourceManager::clear();
-        // all buffers should be unqueued and deleted before deleting the source
-        // alSourcei(sourceID, AL_BUFFER, null);
-        spdlog::debug("Destroying sound engine");
-        if (ALCboolean contextMadeCurrent;
-            !alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, *_shared_device, nullptr))
-        { /* what can you do? */
-        }
-
-        if (!alcCallImpl(alcDestroyContext, *_shared_device, *_shared_context))
-        { /* not much you can do */
-        }
-        // we cannot use alcCallImpl here,since the device is no longer valid after closing, hence querying the error is
-        // not possible
-        if (!alcCloseDevice(*_shared_device)) { spdlog::error("Could not close device"); }
-        //     if (ALCboolean closed; !alcCallImpl(alcCloseDevice, closed, _device, _device))
-        //     { // do we care?
-        //     }
-        spdlog::debug("Sound engine destroyed");
-    }
-}
-
-void SoundEngine::init()
-{
-    if (!_shared_device)
-    {
-        _shared_device = std::make_shared<Device>(alcOpenDevice(nullptr));
-        if (!_shared_context)
-        {
-            Context context{nullptr};
-            if (!alcCallImpl(alcCreateContext, context, *_shared_device, *_shared_device, nullptr) || !(context))
-            {
-                /* probably exit program */
-                throw std::runtime_error("Could not create audio context");
-            }
-            _shared_context = std::make_shared<Context>(context);
-
-            ALCboolean contextMadeCurrent = false;
-            if (!alcCallImpl(alcMakeContextCurrent, contextMadeCurrent, *_shared_device, *_shared_context) ||
-                contextMadeCurrent != ALC_TRUE)
-            {
-                /* probably exit or give up on having sound */
-                throw std::runtime_error("Could not make audio context current");
-            }
-        }
-    }
-    _device = _shared_device;
 }
 
 std::vector<std::string> SoundEngine::getDevices() const
@@ -108,9 +45,9 @@ std::vector<std::string> SoundEngine::getDevices() const
 std::vector<std::string> SoundEngine::getExtensions() const
 {
     const ALCchar* alcExtension;
-    if (!alcCallImpl(alcGetString, alcExtension, _device->device, nullptr, ALC_EXTENSIONS)) return {};
+    if (!alcCallImpl(alcGetString, alcExtension, _device->_device, nullptr, ALC_EXTENSIONS)) return {};
     const ALCchar* alExtension;
-    if (!alcCallImpl(alGetString, alExtension, _device->device, AL_EXTENSIONS)) return {};
+    if (!alcCallImpl(alGetString, alExtension, _device->_device, AL_EXTENSIONS)) return {};
 
     auto alc_exts = alStringToVector(alcExtension, ' ');
     auto al_exts = alStringToVector(alExtension, ' ');
@@ -127,7 +64,7 @@ template <auto F>
 void forAllSources()
 {
     // copy all sources to a new vector
-    std::vector<ALuint> srcs{SourceManager::getSources().begin(), SourceManager::getSources().end()};
+    std::vector<ALuint> srcs = SourceManager::getSourcesIds();
     if (srcs.empty()) return;
     alCallImpl(F, static_cast<ALsizei>(srcs.size()), srcs.data());
 }

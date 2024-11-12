@@ -24,6 +24,7 @@ target_sources(${PROJECT_NAME}
         "src/loaders/LoadMp3.cpp"
         "src/Listener.cpp"
         "src/BackgroundPlayer.cpp"
+        "src/Types.cpp"
 
     PUBLIC
         "include/sndX/SoundEngine.hpp"

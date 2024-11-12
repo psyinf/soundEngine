@@ -9,7 +9,7 @@ class SoundEngine
 {
 public:
     SoundEngine();
-    ~SoundEngine();
+    ~SoundEngine() = default;
 
     std::vector<std::string> getDevices() const;
     std::vector<std::string> getExtensions() const;
@@ -19,13 +19,8 @@ public:
     void stopAll();
 
 private:
-    void init();
-
     std::shared_ptr<Device>  _device;
     std::shared_ptr<Context> _context;
-
-    static inline std::shared_ptr<Device>  _shared_device{};
-    static inline std::shared_ptr<Context> _shared_context{nullptr};
 };
 
 } // namespace soundEngineX

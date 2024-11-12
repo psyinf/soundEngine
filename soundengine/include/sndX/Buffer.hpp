@@ -9,6 +9,8 @@
 
 namespace soundEngineX {
 
+class SoundEngine;
+
 struct FormatDescriptor
 {
     std::uint32_t sampleRateHz{};
