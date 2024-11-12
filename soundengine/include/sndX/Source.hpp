@@ -44,6 +44,7 @@ struct SourceConfiguration
  * Abstract sound source, with a audio buffer attached
  * Possibly later: Options for looping, pitch, volume, etc.
  * Thin wrapper around the source descriptor. Copies will share the buffer
+ * Beware that buffers need to be released before closing the context
  */
 
 class Source

@@ -1,8 +1,8 @@
 #pragma once
 #include <sndX/Types.hpp>
-#include <atomic>
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace soundEngineX {
 class SoundEngine
@@ -21,8 +21,11 @@ public:
 private:
     void init();
 
-    Device  _device;
-    Context _context{nullptr};
+    std::shared_ptr<Device>  _device;
+    std::shared_ptr<Context> _context;
+
+    static inline std::shared_ptr<Device>  _shared_device{};
+    static inline std::shared_ptr<Context> _shared_context{nullptr};
 };
 
 } // namespace soundEngineX
