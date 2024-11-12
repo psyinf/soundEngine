@@ -1,5 +1,5 @@
-#include <sndX/TaskEngine.hpp>
-#include <sndX/BackgroundPlayerTasked.hpp>
+// #include <pgfoundation/taskengine.hpp>
+#include <sndX/BackgroundPlayer.hpp>
 #include <sndX/Loader.hpp>
 #include <sndX/SoundEngine.hpp>
 #include <sndX/Source.hpp>
@@ -11,7 +11,7 @@
 
 void taskedPlayerTest()
 {
-    soundEngineX::BackgroundPlayerTasked player;
+    soundEngineX::BackgroundPlayer player;
     player.play("data/demo/click.wav");
     player.play("data/demo/test.wav");
     player.play("data/demo/mixkit-repeating-arcade-beep-1084.wav");
@@ -19,7 +19,7 @@ void taskedPlayerTest()
 
 void taskedEngineTest()
 {
-    soundEngineX::TaskEngine player;
+    pg::foundation::TaskEngine player;
     using namespace std::chrono_literals;
     auto now = std::chrono::high_resolution_clock::now();
     int  state = 0;
@@ -50,11 +50,11 @@ void taskedEngineTest()
 
 void taskedPlayerSoundTest()
 {
-    soundEngineX::TaskEngine player;
+    pg::foundation::TaskEngine player;
     auto src1 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/click.wav"));
     auto src2 = std::make_shared<soundEngineX::Source>(soundEngineX::loader::load("data/demo/test.wav"));
 
-    player.addTask(soundEngineX::Task{.task = [&src1]() {
+    player.addTask(pg::foundation::Task{.task = [&src1]() {
         src1->start();
         return "";
     }});

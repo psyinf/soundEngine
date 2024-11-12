@@ -44,13 +44,14 @@ struct SourceConfiguration
  * Abstract sound source, with a audio buffer attached
  * Possibly later: Options for looping, pitch, volume, etc.
  * Thin wrapper around the source descriptor. Copies will share the buffer
+ * Beware that buffers need to be released before closing the context
  */
 
 class Source
 {
 public:
     using SourceHandle = uint32_t;
-    Source();
+
     virtual ~Source();
 
     Source(std::shared_ptr<Buffer>&);
@@ -76,9 +77,10 @@ public:
     explicit operator ALuint() const { return _sourceId; };
 
     std::chrono::high_resolution_clock::duration getDurationEstimation() const;
-    ;
 
 private:
+    Source();
+
     void fillStreamBuffers();
 
     std::shared_ptr<Buffer> _attachedBuffer;

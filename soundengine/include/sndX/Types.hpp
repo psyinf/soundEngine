@@ -1,29 +1,59 @@
 #pragma once
-
-#include <AL/al.h>
+#
 #include <AL/alc.h>
+
+#include <string_view>
+#include <memory>
 
 namespace soundEngineX {
 struct Device
 {
-    ALCdevice* device = nullptr;
+    Device(std::string_view device_name = "");
 
-    operator ALCdevice*() { return device; }
+    ~Device();
+    Device(Device const&) = delete;
+
+    ALCdevice* _device = nullptr;
+
+    operator ALCdevice*();
+
+    ALCdevice* get() { return _device; }
 };
 
 struct Context
 {
-    Context(ALCcontext* c)
-      : context(c)
+    Context(std::shared_ptr<Device> device);
+
+    ~Context();
+
+    operator ALCcontext*();
+
+    operator ALCcontext const*();
+
+    bool operator!();
+
+    ALCcontext* _context{nullptr};
+
+    std::shared_ptr<Device> _device;
+};
+
+struct Holder
+{
+    static std::shared_ptr<Device> getDevice()
     {
+        if (!_shared_device) { _shared_device = std::make_shared<Device>(""); }
+
+        return _shared_device;
     }
 
-    ALCcontext* context = nullptr;
+    static std::shared_ptr<Context> getContext()
+    {
+        if (!_shared_context) { _shared_context = std::make_shared<Context>(getDevice()); }
 
-    operator ALCcontext*() { return context; }
+        return _shared_context;
+    }
 
-    operator ALCcontext const*() { return context; }
-
-    bool operator!() { return !context; }
+    static inline std::shared_ptr<Device>  _shared_device{};
+    static inline std::shared_ptr<Context> _shared_context{nullptr};
 };
 } // namespace soundEngineX

@@ -21,23 +21,22 @@ target_sources(${PROJECT_NAME}
         "src/Loader.cpp" 
         "src/loaders/LoadWave.cpp"
         "src/Buffer.cpp" 
-        "src/BackgroundPlayerThreaded.cpp"
-        "src/TaskEngine.cpp"
         "src/loaders/LoadMp3.cpp"
+        "src/Listener.cpp"
+        "src/BackgroundPlayer.cpp"
+        "src/Types.cpp"
 
     PUBLIC
         "include/sndX/SoundEngine.hpp"
         "include/sndX/ALHelpers.hpp" 
-        
-        "include/sndX/TaskEngine.hpp"
+        "include/sndX/SourceManager.hpp"
         "include/sndX/Source.hpp" 
         "include/sndX/Loader.hpp" 
         "include/sndX/Types.hpp" 
         "include/sndX/Buffer.hpp"
         "include/sndX/ErrorTrace.hpp"
-        "include/sndX/BackgroundPlayerInterface.hpp"
-        "include/sndX/BackgroundPlayerThreaded.hpp"
         "include/sndX/BackgroundPlayer.hpp"
+        "include/sndX/Listener.hpp"
     
     PRIVATE        
         "src/loaders/LoadMp3.hpp"
@@ -56,6 +55,8 @@ target_link_libraries(
         minimp3::minimp3
         nonstd::scope-lite
         ${ADDITIONAL_LIBS}
+        pgf::pgf
+
     PRIVATE
         fmt::fmt
 )
@@ -75,5 +76,5 @@ install(
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 target_code_coverage(${PROJECT_NAME})
-#install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/
- #       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+
+ install(IMPORTED_RUNTIME_ARTIFACTS OpenAL RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )

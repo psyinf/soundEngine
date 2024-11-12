@@ -20,6 +20,7 @@ void simpleSync()
 void simpleAsync()
 {
     // play two sounds asynchronously
+
     auto source_a = soundEngineX::Source(soundEngineX::loader::load("data/demo/mixkit-repeating-arcade-beep-1084.wav"));
     auto source_b = soundEngineX::Source(soundEngineX::loader::load("data/demo/test.wav"));
 
@@ -63,15 +64,30 @@ void backgroundPlayer()
     // todo wait properly
 }
 
+void testCallback()
+{
+    soundEngineX::loader::load(
+        R"(e:\develop\projects\resources\galaxyResources\data\music\a-meditation-through-time-amp-space-11947.mp3)",
+        {"space.mp3", [](const soundEngineX::loader::LoadProgressInfo& load_info) {
+             std::cout << load_info.loaded_size << std::endl;
+         }});
+
+    soundEngineX::loader::load(R"(e:\develop\projects\resources\soundResources\data\demo\the-stargazer-112474.wav)",
+                               {"space.mp3", [](const soundEngineX::loader::LoadProgressInfo& load_info) {
+                                    std::cout << load_info.loaded_size << std::endl;
+                                }});
+}
+
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 try
 {
     // initialize a SoundEngine instance
     soundEngineX::SoundEngine engine;
     engine.getExtensions();
+    // test loading callback
 
     simpleSync();
-    // simpleAsync();
+    simpleAsync();
     backgroundPlayer();
     return 0;
 }

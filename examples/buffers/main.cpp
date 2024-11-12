@@ -12,15 +12,13 @@ void sharedBuffer()
 {
     soundEngineX::SoundEngine engine;
 
-    auto                                  source1 = soundEngineX::Source();
-    auto                                  source2 = soundEngineX::Source();
     std::shared_ptr<soundEngineX::Buffer> buffer1 =
         std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load("data/demo/test.wav"));
     std::shared_ptr<soundEngineX::Buffer> buffer2 =
         std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load("data/demo/test.wav"));
 
-    source1.attachBuffer(buffer1);
-    source2.attachBuffer(buffer1);
+    auto source1 = soundEngineX::Source(buffer1);
+    auto source2 = soundEngineX::Source(buffer1);
 
     source2.setSourceConfig({
         .pitch = 0.5,
@@ -38,12 +36,10 @@ void queuedBuffer()
 {
     soundEngineX::SoundEngine engine;
 
-    auto source = soundEngineX::Source();
-
     std::shared_ptr<soundEngineX::Buffer> buffer = std::make_unique<soundEngineX::Buffer>(
         soundEngineX::loader::loadMultiple({"data/demo/click.wav", "data/demo/test.wav"}));
 
-    source.attachBuffer(buffer);
+    auto source = soundEngineX::Source(buffer);
 
     source.setSourceConfig({
         .pitch = 3.5,
@@ -91,7 +87,6 @@ void queuedBufferRepeat()
                                                      "data/demo/stop.wav",
                                                      "data/demo/stop.wav"},
                                3);
-    auto                      source = soundEngineX::Source();
 
     std::shared_ptr<soundEngineX::Buffer> buffer = std::make_unique<soundEngineX::Buffer>(
         soundEngineX::loader::loadMultiple({"data/demo/click.wav", "data/demo/test.wav"}));
@@ -101,7 +96,7 @@ void queuedBufferRepeat()
         return soundEngineX::loader::loadMultiple(files);
     });
 
-    source.attachBuffer(buffer);
+    auto source = soundEngineX::Source(buffer);
 
     source.setSourceConfig({
         .pitch = 3.5,

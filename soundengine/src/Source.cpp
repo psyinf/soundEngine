@@ -1,6 +1,7 @@
 #include <sndX/Source.hpp>
 #include <sndX/ALHelpers.hpp>
 #include <sndX/Buffer.hpp>
+#include <sndX/SourceManager.hpp>
 #include <AL/al.h>
 #include <AL/alc.h>
 
@@ -9,6 +10,7 @@ using namespace soundEngineX;
 Source::Source()
 {
     alCallImpl(alGenSources, 1, &_sourceId);
+    SourceManager::addSource(this);
 }
 
 Source::Source(std::shared_ptr<Buffer>& buffer)
@@ -33,6 +35,7 @@ Source::Source(std::shared_ptr<Buffer>& buffer, const SourceConfiguration& cfg)
 Source::~Source()
 {
     if (_sourceId) { alCallImpl(alDeleteSources, 1, &_sourceId); }
+    SourceManager::removeSource(this);
 }
 
 void Source::play()
