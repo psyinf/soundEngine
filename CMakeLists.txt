@@ -11,7 +11,7 @@ endif()
 project(soundengine)
 set(CMAKE_CXX_STANDARD 23)  
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CODE_COVERAGE ON)
+option(CODE_COVERAGE "Enable coverage reporting" OFF)
 
 include(cmake/PreventInSourceBuilds.cmake)
 include(cmake/configure_analysis.cmake)
