@@ -11,6 +11,8 @@ namespace soundEngineX {
 class BufferCache
 {
 public:
+    static bool has(const std::string& filename) { return buffers.find(filename) != buffers.end(); }
+
     static std::shared_ptr<soundEngineX::Buffer>& get(const std::string&                    filename,
                                                       soundEngineX::loader::LoadingCallback progress_cb = {})
     {
