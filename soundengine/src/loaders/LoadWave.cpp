@@ -1,11 +1,11 @@
 #include "LoadWave.hpp"
 #include <fmt/format.h>
 
-soundEngineX::FormatDescriptor load_wav_file_header(std::istream& file, size_t& size)
+soundEngineX::FormatDescriptor load_wav_file_header(const std::vector<char>& buffer, size_t& size)
 {
     soundEngineX::FormatDescriptor formatDesc;
 
-    struct header
+    struct WAVHeader
     {
         char          chunkID[4];
         std::uint32_t fileSize;
@@ -22,9 +22,11 @@ soundEngineX::FormatDescriptor load_wav_file_header(std::istream& file, size_t& 
         std::uint32_t dataSize;
     } header;
 
-    // TODO: replace 44 with size of struct?
-    file.read(reinterpret_cast<char*>(&header), 44);
-    // TODO: check header values
+    if (buffer.size() < 44) { throw std::runtime_error("Invalid WAV file header"); }
+    std::memcpy(&header, buffer.data(), sizeof(WAVHeader));
+
+    // check
+    if (std::memcmp(header.chunkID, "RIFF", 4) != 0) { throw std::runtime_error("Invalid WAV file header"); }
 
     formatDesc.channels = static_cast<std::uint8_t>(header.numChannels);
     formatDesc.bitsPerSample = static_cast<std::uint8_t>(header.bitsPerSample);
@@ -37,8 +39,12 @@ soundEngineX::FormatDescriptor load_wav_file_header(std::istream& file, size_t& 
 soundEngineX::DataChunk soundEngineX::format::load_wav(std::istream&                         in,
                                                        soundEngineX::loader::LoadingCallback progress_cb)
 {
-    size_t            size = 0;
-    FormatDescriptor  format = load_wav_file_header(in, size);
+    size_t size = 0;
+    // header into vector
+    std::vector<char> header(44);
+    in.read(header.data(), 44);
+
+    FormatDescriptor  format = load_wav_file_header(header, size);
     std::vector<char> data(size);
     // read chunked if size is greater than threshold (e.g. 1MB)
     // every 1 MB read, call progress_cb
@@ -70,4 +76,15 @@ soundEngineX::DataChunk soundEngineX::format::load_wav(std::string_view         
     if (!in.is_open()) { throw std::runtime_error(fmt::format("Could not open {} for reading", filename)); }
 
     return load_wav(in, progress_cb);
+}
+
+soundEngineX::DataChunk soundEngineX::format::load_wav(const std::vector<char>&              buffer,
+                                                       soundEngineX::loader::LoadingCallback progress_cb)
+{
+    size_t            size = 0;
+    FormatDescriptor  format = load_wav_file_header(buffer, size);
+    std::vector<char> data(size);
+    std::memcpy(data.data(), buffer.data() + 44, size);
+    if (progress_cb.cb) { progress_cb.cb({size, size}); }
+    return {format, data};
 }

@@ -50,6 +50,25 @@ DataDescriptor load(std::istream& stream, Type type, LoadingCallback progress_cb
     }
 }
 
+soundEngineX::DataDescriptor load(const std::vector<char>& data, Type type, LoadingCallback progress_cb)
+{
+    switch (type)
+    {
+    case Type::WAV: {
+        auto&& chunk = soundEngineX::format::load_wav(data, progress_cb);
+        return DataDescriptor{{chunk}};
+    }
+    case Type::MP3: {
+        auto&& chunk = soundEngineX::format::load_mp3(data, progress_cb);
+        return DataDescriptor{{chunk}};
+    }
+    break;
+    default:
+        throw std::invalid_argument("Unknown type");
+        break;
+    }
+}
+
 DataDescriptor loadMultiple(const std::vector<std::string>& names, soundEngineX::loader::LoadingCallback progress_cb)
 {
     DataDescriptor dataDescriptor{};

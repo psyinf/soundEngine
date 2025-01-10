@@ -63,34 +63,8 @@ MP3D_PROGRESS_CB makeCallbackWrapper()
 soundEngineX::DataChunk soundEngineX::format::load_mp3(std::istream&                         in,
                                                        soundEngineX::loader::LoadingCallback progress_cb)
 {
-    mp3dec_t           dec{};
-    mp3dec_file_info_t mp3Info{};
-    mp3dec_init(&dec);
-    auto           guard = nonstd::make_scope_exit([&mp3Info] {
-        // there is seemingly no mp3dec_free/close
-        ::free(static_cast<void*>(mp3Info.buffer));
-    });
-    ProgressCBInfo cb_info{progress_cb, "filename"};
-    int            ret;
-
     std::vector<char> buffer(std::istreambuf_iterator<char>{in}, {});
-    mp3dec_map_info_t map_info;
-    map_info.buffer = reinterpret_cast<const uint8_t*>(buffer.data());
-    map_info.size = buffer.size();
-
-    mp3CallImpl(
-        mp3dec_load_mapinfo, &dec, &map_info, &mp3Info, progress_cb.cb ? makeCallbackWrapper() : nullptr, &cb_info);
-
-    spdlog::debug("Freq {} Hz, {} Kbits/s", mp3Info.hz, mp3Info.avg_bitrate_kbps);
-
-    soundEngineX::FormatDescriptor formatDesc;
-    formatDesc.channels = static_cast<std::uint8_t>(mp3Info.channels);
-    formatDesc.bitsPerSample = 8 * sizeof(mp3d_sample_t);
-    formatDesc.sampleRateHz = mp3Info.hz;
-
-    return {formatDesc,
-            std::vector<char>(reinterpret_cast<char*>(mp3Info.buffer),
-                              reinterpret_cast<char*>(mp3Info.buffer + mp3Info.samples))};
+    return load_mp3(buffer, progress_cb);
 }
 
 soundEngineX::DataChunk soundEngineX::format::load_mp3(std::string_view                      filename,
@@ -107,6 +81,38 @@ soundEngineX::DataChunk soundEngineX::format::load_mp3(std::string_view         
 
     mp3CallImpl(
         mp3dec_load, &dec, filename.data(), &mp3Info, progress_cb.cb ? makeCallbackWrapper() : nullptr, &cb_info);
+
+    spdlog::debug("Freq {} Hz, {} Kbits/s", mp3Info.hz, mp3Info.avg_bitrate_kbps);
+
+    soundEngineX::FormatDescriptor formatDesc;
+    formatDesc.channels = static_cast<std::uint8_t>(mp3Info.channels);
+    formatDesc.bitsPerSample = 8 * sizeof(mp3d_sample_t);
+    formatDesc.sampleRateHz = mp3Info.hz;
+
+    return {formatDesc,
+            std::vector<char>(reinterpret_cast<char*>(mp3Info.buffer),
+                              reinterpret_cast<char*>(mp3Info.buffer + mp3Info.samples))};
+}
+
+soundEngineX::DataChunk soundEngineX::format::load_mp3(const std::vector<char>&              buffer,
+                                                       soundEngineX::loader::LoadingCallback progress_cb)
+{
+    mp3dec_t           dec{};
+    mp3dec_file_info_t mp3Info{};
+    mp3dec_init(&dec);
+    auto           guard = nonstd::make_scope_exit([&mp3Info] {
+        // there is seemingly no mp3dec_free/close
+        ::free(static_cast<void*>(mp3Info.buffer));
+    });
+    ProgressCBInfo cb_info{progress_cb, "filename"};
+    int            ret;
+
+    mp3dec_map_info_t map_info;
+    map_info.buffer = reinterpret_cast<const uint8_t*>(buffer.data());
+    map_info.size = buffer.size();
+
+    mp3CallImpl(
+        mp3dec_load_mapinfo, &dec, &map_info, &mp3Info, progress_cb.cb ? makeCallbackWrapper() : nullptr, &cb_info);
 
     spdlog::debug("Freq {} Hz, {} Kbits/s", mp3Info.hz, mp3Info.avg_bitrate_kbps);
 
