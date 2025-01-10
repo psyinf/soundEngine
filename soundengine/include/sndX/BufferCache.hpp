@@ -25,6 +25,20 @@ public:
         return buffers[filename];
     }
 
+    static std::shared_ptr<soundEngineX::Buffer>& get(const std::string&                    key,
+                                                      std::istream&                         stream,
+                                                      const soundEngineX::loader::Type      type,
+                                                      soundEngineX::loader::LoadingCallback progress_cb = {})
+    {
+        auto it = buffers.find(key);
+        if (it == buffers.end())
+        {
+            buffers[key] =
+                std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load(stream, type, progress_cb));
+        }
+        return buffers[key];
+    }
+
 protected:
     static inline std::unordered_map<std::string, std::shared_ptr<soundEngineX::Buffer>> buffers{};
 };
