@@ -62,14 +62,20 @@ DataDescriptor loadMultiple(const std::vector<std::string>& names, soundEngineX:
     return dataDescriptor;
 }
 
-Type getType(std::string_view name)
+Type getType(std::string_view full_name)
 {
-    auto extension = std::filesystem::path(name).extension().string();
+    auto extension = std::filesystem::path(full_name).extension().string();
+
+    // in case the extension is empty, we assume the name is only the extension
+    extension = extension.empty() ? full_name : extension;
     std::transform(extension.begin(), extension.end(), extension.begin(), [](auto c) {
         return static_cast<char>(std::tolower(c));
     });
-    if (extension == ".wav") { return Type::WAV; }
-    else if (extension == ".mp3") { return Type::MP3; }
+    // remove the dot, if there is one
+    if (extension.front() == '.') { extension = extension.substr(1); }
+
+    if (extension == "wav") { return Type::WAV; }
+    else if (extension == "mp3") { return Type::MP3; }
     else { throw std::invalid_argument("Cannot determine file type from extension"); }
 }
 

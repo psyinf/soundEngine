@@ -8,6 +8,8 @@
 #include <iostream>
 #include <thread>
 
+#include <fstream>
+
 void simpleSync()
 {
     // play two sounds in a row
@@ -78,6 +80,19 @@ void testCallback()
                                 }});
 }
 
+void testLoader()
+{
+    auto type = soundEngineX::loader::getType("Mp3");
+    // test stream loading MP3
+    std::ifstream file(
+        R"(e:\develop\projects\resources\galaxyResources\data\music\a-meditation-through-time-amp-space-11947.mp3)",
+        std::ios::binary);
+    auto res = soundEngineX::loader::load(file, type, {"", [](const soundEngineX::loader::LoadProgressInfo& load_info) {
+                                                           std::cout << load_info.loaded_size << std::endl;
+                                                       }});
+
+    soundEngineX::Source(res).play();
+}
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 try
 {
@@ -85,7 +100,7 @@ try
     soundEngineX::SoundEngine engine;
     engine.getExtensions();
     // test loading callback
-
+    testLoader();
     simpleSync();
     simpleAsync();
     backgroundPlayer();
