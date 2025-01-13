@@ -50,9 +50,9 @@ void simpleAsync()
 void backgroundPlayer()
 {
     soundEngineX::BackgroundPlayer player;
-    player.preLoad("data/demo/click.wav");
-    player.preLoad("data/demo/test.wav");
-    player.preLoad("data/demo/mixkit-repeating-arcade-beep-1084.wav");
+    player.load("data/demo/click.wav");
+    player.load("data/demo/test.wav");
+    player.load("data/demo/mixkit-repeating-arcade-beep-1084.wav");
 
     for (auto i = 0u; i < 3; ++i)
     {

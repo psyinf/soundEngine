@@ -13,7 +13,7 @@ void backgroundPlayer()
 {
     soundEngineX::BackgroundPlayer player;
     pg::foundation::TaskEngine     taskEngine;
-    player.preLoad("data/demo/mixkit-repeating-arcade-beep-1084.wav");
+    player.load("data/demo/mixkit-repeating-arcade-beep-1084.wav");
     // add some task that modifies the listener gain
     taskEngine.addTask({.task{[]() {
                             auto gain = soundEngineX::Listener::getGain();

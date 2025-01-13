@@ -7,9 +7,9 @@ soundEngineX::BackgroundPlayer::BackgroundPlayer(std::shared_ptr<soundEngineX::B
 {
 }
 
-void soundEngineX::BackgroundPlayer::preLoad(const std::string& buffer_name)
+void soundEngineX::BackgroundPlayer::load(const std::string& buffer_name, soundEngineX::LoaderDelegate delegate)
 {
-    _bufferProvider->preLoad(buffer_name);
+    _bufferProvider->load(buffer_name, delegate);
 }
 
 uint32_t soundEngineX::BackgroundPlayer::play(const std::string&                  name,

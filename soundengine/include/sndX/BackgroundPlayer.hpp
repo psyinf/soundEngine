@@ -13,7 +13,7 @@ public:
     BackgroundPlayer(std::shared_ptr<BufferProvider> buffer_provider = std::make_shared<BufferCacheProvider>());
 
     // pre-load a sound
-    void preLoad(const std::string& buffer_name);
+    void load(const std::string& buffer_name, soundEngineX::LoaderDelegate delegate = {});
     // play a sound
     uint32_t play(const std::string& name, soundEngineX::SourceConfiguration&& cfg = {}, PlaybackFinishedCallback = {});
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <sndX/BufferLoaderDelegate.hpp>
 #include <sndX/Buffer.hpp>
 #include <sndX/Source.hpp>
 #include <sndX/Loader.hpp>
@@ -17,31 +18,12 @@ namespace soundEngineX {
 class BufferCache
 {
 public:
-    using BufferPtr = std::shared_ptr<soundEngineX::Buffer>;
-    using StreamLoaderDelegate =
-        std::function<BufferPtr(std::istream&, soundEngineX::loader::Type, soundEngineX::loader::LoadingCallback)>;
-    using FileLoaderDelegate = std::function<BufferPtr(const std::string&, soundEngineX::loader::LoadingCallback)>;
-
-    // TODO: this could be a std::span
-    using MemBufLoaderDelegate = std::function<
-        BufferPtr(const std::vector<char>&, soundEngineX::loader::Type, soundEngineX::loader::LoadingCallback)>;
-
     static bool has(const std::string& filename);
 
+    /*Get the buffer with the given key. If not in cache the supplied file_loader_delegate will be called with the key
+     * to fill the buffer-cache*/
     static BufferPtr& get(const std::string&                    key,
-                          FileLoaderDelegate                    file_loader_delegate,
-                          soundEngineX::loader::LoadingCallback progress_cb = {});
-
-    static BufferPtr& get(const std::string&                    key,
-                          std::istream&                         stream,
-                          const soundEngineX::loader::Type      type,
-                          StreamLoaderDelegate                  stream_loader_delegate,
-                          soundEngineX::loader::LoadingCallback progress_cb = {});
-
-    static BufferPtr& get(const std::string&                    key,
-                          const std::vector<char>&              data,
-                          const soundEngineX::loader::Type      type,
-                          MemBufLoaderDelegate                  loader_delegate,
+                          LoaderDelegate&                       file_loader_delegate,
                           soundEngineX::loader::LoadingCallback progress_cb = {});
 
     // non-delegating
@@ -56,6 +38,8 @@ public:
                           const std::vector<char>&              data,
                           const soundEngineX::loader::Type      type,
                           soundEngineX::loader::LoadingCallback progress_cb = {});
+    // only getting the buffer
+    static BufferPtr retrieve(const std::string& key);
 
 protected:
     static inline std::unordered_map<std::string, BufferPtr> buffers{};
