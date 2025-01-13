@@ -51,7 +51,7 @@ soundEngineX::BufferPtr& soundEngineX::BufferCache::get(const std::string&      
     return buffers[key];
 }
 
-soundEngineX::BufferPtr soundEngineX::BufferCache::retrieve(const std::string& key)
+soundEngineX::BufferPtr& soundEngineX::BufferCache::retrieve(const std::string& key)
 {
     return buffers.at(key);
 }

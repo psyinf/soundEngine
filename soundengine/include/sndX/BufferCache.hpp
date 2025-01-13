@@ -39,7 +39,7 @@ public:
                           const soundEngineX::loader::Type      type,
                           soundEngineX::loader::LoadingCallback progress_cb = {});
     // only getting the buffer
-    static BufferPtr retrieve(const std::string& key);
+    static BufferPtr& retrieve(const std::string& key);
 
 protected:
     static inline std::unordered_map<std::string, BufferPtr> buffers{};
