@@ -80,16 +80,18 @@ struct SimpleGenerator
 void queuedBufferRepeat()
 {
     soundEngineX::SoundEngine engine;
-    auto                      gen = SimpleGenerator({"data/demo/click.wav",
-                                                     "data/demo/click.wav",
-                                                     "data/demo/click.wav",
-                                                     "data/demo/stop.wav",
-                                                     "data/demo/stop.wav",
-                                                     "data/demo/stop.wav"},
+
+    auto gen = SimpleGenerator({"data/demo/click.wav",
+                                "data/demo/click.wav",
+                                "data/demo/click.wav",
+                                "data/demo/stop.wav",
+                                "data/demo/stop.wav",
+                                "data/demo/stop.wav"},
                                3);
 
     std::shared_ptr<soundEngineX::Buffer> buffer = std::make_unique<soundEngineX::Buffer>(
         soundEngineX::loader::loadMultiple({"data/demo/click.wav", "data/demo/test.wav"}));
+
     buffer->setRequestNewDataCallback([&gen](auto size_to_load) { //
         auto files = std::vector<std::string>(std::min(size_to_load, gen.getMakesLeft()));
         std::generate(files.begin(), files.end(), [&gen]() { return gen.make(); });
@@ -101,6 +103,7 @@ void queuedBufferRepeat()
     source.setSourceConfig({
         .pitch = 3.5,
         .gain = 1,
+        .stream = (true),
     });
 
     auto a = std::async(std::launch::async, [&source]() { source.play(); });

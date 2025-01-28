@@ -1,13 +1,15 @@
 #include <sndX/BackgroundPlayer.hpp>
+#include <sndX/ALHelpers.hpp>
 
-soundEngineX::BackgroundPlayer::BackgroundPlayer()
-  : taskEngine()
+soundEngineX::BackgroundPlayer::BackgroundPlayer(std::shared_ptr<soundEngineX::BufferProvider> buffer_provider)
+  : _taskEngine()
+  , _bufferProvider(buffer_provider)
 {
 }
 
-void soundEngineX::BackgroundPlayer::load(const std::string& name)
+void soundEngineX::BackgroundPlayer::load(const std::string& buffer_name, soundEngineX::LoaderDelegate delegate)
 {
-    BufferCache::get(name);
+    _bufferProvider->load(buffer_name, delegate);
 }
 
 uint32_t soundEngineX::BackgroundPlayer::play(const std::string&                  name,
@@ -15,34 +17,34 @@ uint32_t soundEngineX::BackgroundPlayer::play(const std::string&                
                                               PlaybackFinishedCallback            finished_callback /*={}*/)
 {
     using namespace std::chrono_literals;
-    auto       source = std::make_shared<soundEngineX::Source>(BufferCache::get(name), std::move(cfg));
+    auto       source = std::make_shared<soundEngineX::Source>(_bufferProvider->get(name), std::move(cfg));
     const auto duration = source->getDurationEstimation();
 
-    taskEngine.addTask([source]() { source->start(); });
+    _taskEngine.addTask([source]() { source->start(); });
 
-    taskEngine.addTask({.task =
-                            [source, finished_callback]() {
-                                auto stopped = source->isStopped();
-                                if (stopped && finished_callback) { finished_callback(); }
-                                return stopped;
-                            },
-                        .reschedule_on_failure = true,
-                        .starting_time_offset = duration,
-                        .reschedule_delay = 100ms});
+    _taskEngine.addTask({.task =
+                             [source, finished_callback]() {
+                                 auto stopped = source->isStopped();
+                                 if (stopped && finished_callback) { finished_callback(); }
+                                 return stopped;
+                             },
+                         .reschedule_on_failure = true,
+                         .starting_time_offset = duration,
+                         .reschedule_delay = 100ms});
     return source->getSourceId();
 }
 
 void soundEngineX::BackgroundPlayer::stop(uint32_t sourceId)
 {
-    taskEngine.addTask([sourceId]() { alCallImpl(alSourceStop, sourceId); });
+    _taskEngine.addTask([sourceId]() { alCallImpl(alSourceStop, sourceId); });
 }
 
 void soundEngineX::BackgroundPlayer::forceCheckPending()
 {
-    taskEngine.forceCheckTimedTasks();
+    _taskEngine.forceCheckTimedTasks();
 }
 
 bool soundEngineX::BackgroundPlayer::hasPendingTasks() const
 {
-    return !taskEngine.hasTimedTasks();
+    return !_taskEngine.hasTimedTasks();
 }

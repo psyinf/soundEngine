@@ -25,6 +25,7 @@ target_sources(${PROJECT_NAME}
         "src/Listener.cpp"
         "src/BackgroundPlayer.cpp"
         "src/Types.cpp"
+        "src/BufferCache.cpp"
 
     PUBLIC
         "include/sndX/SoundEngine.hpp"

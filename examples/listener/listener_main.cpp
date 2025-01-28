@@ -12,18 +12,18 @@
 void backgroundPlayer()
 {
     soundEngineX::BackgroundPlayer player;
-    pg::foundation::TaskEngine taskEngine;
+    pg::foundation::TaskEngine     taskEngine;
     player.load("data/demo/mixkit-repeating-arcade-beep-1084.wav");
     // add some task that modifies the listener gain
     taskEngine.addTask({.task{[]() {
-                               auto gain = soundEngineX::Listener::getGain();
-                               std::this_thread::sleep_for(std::chrono::milliseconds(30));
-                               soundEngineX::Listener::setGain(gain + 0.1f);
-                               if (gain > 5.0f) { soundEngineX::Listener::setGain(0.0f); }
+                            auto gain = soundEngineX::Listener::getGain();
+                            std::this_thread::sleep_for(std::chrono::milliseconds(30));
+                            soundEngineX::Listener::setGain(gain + 0.1f);
+                            if (gain > 5.0f) { soundEngineX::Listener::setGain(0.0f); }
 
-                               return false;
-                           }},
-                           .reschedule_on_failure{true}});
+                            return false;
+                        }},
+                        .reschedule_on_failure{true}});
 
     for (auto i = 0u; i < 3; ++i)
     {

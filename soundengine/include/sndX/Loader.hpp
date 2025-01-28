@@ -26,6 +26,8 @@ enum class Type
 
 DataDescriptor load(std::string_view name, LoadingCallback = {});
 DataDescriptor load(std::string_view name, Type type, LoadingCallback = {});
+DataDescriptor load(std::istream& stream, Type type, LoadingCallback = {});
+DataDescriptor load(const std::vector<char>& data, Type type, LoadingCallback = {});
 DataDescriptor loadMultiple(const std::vector<std::string>& names, LoadingCallback = {});
 
 Type getType(std::string_view name);

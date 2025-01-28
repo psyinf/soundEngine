@@ -1,4 +1,5 @@
 #pragma once
+#include <sndX/BufferLoaderDelegate.hpp>
 #include <sndX/Buffer.hpp>
 #include <sndX/Source.hpp>
 #include <sndX/Loader.hpp>
@@ -8,23 +9,40 @@
 
 namespace soundEngineX {
 
+/* Mono-state that allows to "get" resources based on a filename, stream or memory buffer.
+ * The cache will load the resource if it is not already loaded.
+ * The cache will use the provided delegates to load the resource if they are set.
+ * If the delegates are not set, the cache will use the default loader.
+ */
+
 class BufferCache
 {
 public:
-    static std::shared_ptr<soundEngineX::Buffer>& get(const std::string&                    filename,
-                                                      soundEngineX::loader::LoadingCallback progress_cb = {})
-    {
-        auto it = buffers.find(filename);
-        if (it == buffers.end())
-        {
-            buffers[filename] =
-                std::make_unique<soundEngineX::Buffer>(soundEngineX::loader::load(filename, progress_cb));
-        }
-        return buffers[filename];
-    }
+    static bool has(const std::string& filename);
+
+    /*Get the buffer with the given key. If not in cache the supplied file_loader_delegate will be called with the key
+     * to fill the buffer-cache*/
+    static BufferPtr& get(const std::string&                    key,
+                          LoaderDelegate&                       file_loader_delegate,
+                          soundEngineX::loader::LoadingCallback progress_cb = {});
+
+    // non-delegating
+    static BufferPtr& get(const std::string& key, soundEngineX::loader::LoadingCallback progress_cb = {});
+
+    static BufferPtr& get(const std::string&                    key,
+                          std::istream&                         stream,
+                          const soundEngineX::loader::Type      type,
+                          soundEngineX::loader::LoadingCallback progress_cb = {});
+
+    static BufferPtr& get(const std::string&                    key,
+                          const std::vector<char>&              data,
+                          const soundEngineX::loader::Type      type,
+                          soundEngineX::loader::LoadingCallback progress_cb = {});
+    // only getting the buffer
+    static BufferPtr& retrieve(const std::string& key);
 
 protected:
-    static inline std::unordered_map<std::string, std::shared_ptr<soundEngineX::Buffer>> buffers{};
+    static inline std::unordered_map<std::string, BufferPtr> buffers{};
 };
 
 } // namespace soundEngineX
