@@ -1,7 +1,8 @@
 #pragma once
 #include <AL/al.h>
+
+#include <chrono>
 #include <memory>
-#include <future>
 
 namespace soundEngineX {
 
