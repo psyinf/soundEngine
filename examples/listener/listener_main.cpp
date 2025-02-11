@@ -23,7 +23,7 @@ void backgroundPlayer()
 
                             return false;
                         }},
-                        .reschedule_on_failure{true}});
+                        .reschedule_on_failure = true});
 
     for (auto i = 0u; i < 3; ++i)
     {
