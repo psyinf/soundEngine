@@ -2,7 +2,7 @@
 #
 #include <AL/alc.h>
 
-#include <string_view>
+#include <string>
 #include <memory>
 
 namespace soundEngineX {

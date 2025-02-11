@@ -15,7 +15,7 @@ std::vector<std::string> alStringToVector(const ALCchar* list, const char separa
     if (!list) return {};
     std::vector<std::string> resultVec;
     std::string_view         sv(list);
-    auto                     splits = std::ranges::split_view(sv, {separator});
+    auto                     splits = std::ranges::split_view(sv, separator);
     // copy each split into the resultVec
     for (auto split : splits)
     {

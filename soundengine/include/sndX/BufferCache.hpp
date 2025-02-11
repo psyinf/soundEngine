@@ -3,8 +3,6 @@
 #include <sndX/Buffer.hpp>
 #include <sndX/Source.hpp>
 #include <sndX/Loader.hpp>
-#include <memory>
-#include <string>
 #include <unordered_map>
 
 namespace soundEngineX {

@@ -1,5 +1,7 @@
 
 #pragma once
+
+#include <algorithm>
 #include <unordered_set>
 #include <sndX/Source.hpp>
 

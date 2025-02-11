@@ -1,8 +1,10 @@
-#include <iostream>
 #include <sndX/Loader.hpp>
 #include <sndX/SoundEngine.hpp>
 #include <sndX/Source.hpp>
-#include <sndX/Types.hpp>
+
+#include <iostream>
+#include <thread>
+
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 try
 {

@@ -1,6 +1,7 @@
 #pragma once
 #include <AL/al.h>
 
+#include <chrono>
 #include <cstdint>
 #include <deque>
 #include <functional>
